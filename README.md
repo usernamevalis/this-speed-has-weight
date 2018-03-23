@@ -1,14 +1,15 @@
 # this-speed-has-weight
 project repo for the Workshop in Plataforma Bogota April/March 2018
+<br>
 
-Basic nodejs server communicates with p5js frontend over websockets.
-The server collects sensor information from an Arduino on the serial port and updates the p5js frontend using that information.
+Basic nodejs server communicates with p5js frontend over websockets. <br>
+The server collects sensor information from an Arduino on the serial port and updates the p5js frontend using that information.<br>
 
-The arduio serial protocol is straight forward and easy add to more sensors/information. I will add descriptions shortly
+The arduio serial protocol is straight forward and easy add to more sensors/information. I will add descriptions shortly<br>
 
-Still to do:
-Add boot scripts for RPI
-Add install / setup scripts for nodejs for RPI
-Add Arduino code
-Extend socket API
-Develop p5js template
+Still to do:<br>
+Add boot scripts for RPI<br>
+Add install / setup scripts for nodejs for RPI<br>
+Add Arduino code<br>
+Extend socket API<br>
+Develop p5js template<br>
