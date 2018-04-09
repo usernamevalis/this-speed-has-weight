@@ -9,7 +9,7 @@ yes Y | sudo apt-get install npm
 echo "done."
 
 echo "install installing project dependencies"
-npm install ./../project-template/webserver/ --prefix ./../project-template/webserver/
+npm install ./../project-template/webserver/ --prefix ../project-template/webserver/
 
 echo "Downloading Arduino Ide to current folder"
 wget https://downloads.arduino.cc/arduino-1.8.5-linuxarm.tar.xz
@@ -21,6 +21,6 @@ sudo /opt/arduino-1.8.5/./install.sh
 echo "done."
 
 echo "making a backup of the project template, and placing it in 'backups'"
-cp ./../project-template ./../backups/project-template-master
+cp -r ./../project-template ./../backups/project-template-master
 echo "done and done."
 echo "goodbye"
