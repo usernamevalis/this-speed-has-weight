@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "updating"
+yes Y | sudo apt-get update
+
 echo "setting up NPM"
 sudo chmod +x install_npm.sh
 ./install_npm.sh
