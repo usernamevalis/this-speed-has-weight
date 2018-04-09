@@ -25,4 +25,10 @@ Make sure you are connected to the internet
 
 2. Unzip the downloaded folder and remove the archive:
 
-      unzip master.zip && rm master.zip
+      unzip master.zip
+
+3. run the install script inside of the 'setup-scripts' folder
+
+      chmod +x this-speed-has-weight-master/setup/setup-scripts/install.sh
+
+      this-speed-has-weight-master/setup/setup-scripts/./install.sh
