@@ -20,7 +20,5 @@ sudo mv arduino-1.8.5 /opt/ && rm arduino-1.8.5-linuxarm.tar.xz
 sudo /opt/arduino-1.8.5/./install.sh
 echo "done."
 
-echo "making a backup of the project template, and placing it in 'backups'"
-cp -r ./../project-template ./../backups/project-template-master
 echo "done and done."
 echo "goodbye"
