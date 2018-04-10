@@ -27,8 +27,10 @@ Make sure you are connected to the internet
 
       unzip master.zip
 
-3. run the install script inside of the 'setup-scripts' folder
+3. Make the install file executable
 
       chmod +x this-speed-has-weight-master/setup-scripts/install.sh
+
+4. Run the install script inside of the 'setup-scripts' folder
 
       this-speed-has-weight-master/setup-scripts/./install.sh
