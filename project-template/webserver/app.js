@@ -24,44 +24,44 @@ var server = app.listen(3000, function() {
 });
 
 //======================Serial=================//
-// const SerialPort = require('serialport');
-// const Readline = SerialPort.parsers.Readline;
-//
-// var myPort = new SerialPort(portname, {
-//   baudRate: 115200
-// });
-// const parser = new Readline();
-// myPort.pipe(parser);
-//
-// myPort.on("open", function() {
-//   console.log('open');
-//
-//   /*sending "read\r" down the serialport makes the
-//   arduino read all its sensors - stil to be defined
-//   and send that information back over the serialport
-//   formatted to be parsed by the serialparser */
-//   var receive = setInterval(function() {
-//     myPort.write("read1\r");
-//     clearInterval(receive);
-//     receive = setInterval(function() {
-//       myPort.write("read1\r");
-//     }, 100);
-//   }, 2000);
-//
-//   parser.on('data', function(data) {
-//     var dataPacket = data.split(',');
-//     var lightData = dataPacket[0];
-//     io.emit("sensor1", lightData);
-//   });
-// });
-//
-// myPort.on('error', function(err) {
-//   console.log("ERROR ERROR: " + err);
-// });
-//
-// myPort.on('close', function() {
-//   console.log("port is now closed");
-// });
+const SerialPort = require('serialport');
+const Readline = SerialPort.parsers.Readline;
+
+var myPort = new SerialPort(portname, {
+  baudRate: 115200
+});
+const parser = new Readline();
+myPort.pipe(parser);
+
+myPort.on("open", function() {
+  console.log('open');
+
+  /*sending "read\r" down the serialport makes the
+  arduino read all its sensors - stil to be defined
+  and send that information back over the serialport
+  formatted to be parsed by the serialparser */
+  var receive = setInterval(function() {
+    myPort.write("read1\r");
+    clearInterval(receive);
+    receive = setInterval(function() {
+      myPort.write("read1\r");
+    }, 100);
+  }, 2000);
+
+  parser.on('data', function(data) {
+    var dataPacket = data.split(',');
+    var lightData = dataPacket[0];
+    io.emit("sensor1", lightData);
+  });
+});
+
+myPort.on('error', function(err) {
+  console.log("ERROR ERROR: " + err);
+});
+
+myPort.on('close', function() {
+  console.log("port is now closed");
+});
 
 //=========================SocketIO=================//
 var io = require('socket.io').listen(server);
