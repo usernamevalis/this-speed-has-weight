@@ -9,7 +9,7 @@ The Arduio serial protocol is straight forward and easy add to more sensors/info
 
 Still to do:<br>
 Add boot scripts for RPI<br>
-Add install / setup scripts for nodejs for RPI<br>
+~~Add install / setup scripts for nodejs for RPI<br>~~
 Add Arduino code<br>
 Extend socket API<br>
 Develop p5js template<br>
