@@ -21,7 +21,7 @@ Make sure you are connected to the internet
 
 1. Download the repository with the following terminal cmd:
 
-      wget https://github.com/usernamevalis/this-speed-has-weight/archive/master.zip
+      cd ~/ && wget https://github.com/usernamevalis/this-speed-has-weight/archive/master.zip
 
 2. Unzip the downloaded folder and remove the archive:
 
