@@ -20,7 +20,7 @@ Develop p5js template<br>
 This following instructions will install the Arduino IDE, the NPM package manager and setup the template project.
 Dont forget to change your timezone and enable SSH if you need it. You can do this by running the following cmd in the terminal:
 
-    `sudo raspi-config`
+`sudo raspi-config`
 
 Make sure you are connected to the internet
 
