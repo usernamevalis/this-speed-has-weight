@@ -23,14 +23,10 @@ Make sure you are connected to the internet
 
       cd ~/ && wget https://github.com/usernamevalis/this-speed-has-weight/archive/master.zip
 
-2. Unzip the downloaded folder and remove the archive:
+2. Unzip the downloaded folder and make the install script executable:
 
-      unzip master.zip
+      unzip master.zip && chmod +x this-speed-has-weight-master/setup-scripts/install.sh
 
-3. Make the install file executable
-
-      chmod +x this-speed-has-weight-master/setup-scripts/install.sh
-
-4. Run the install script inside of the 'setup-scripts' folder
+3. Run the install script inside of the 'setup-scripts' folder
 
       this-speed-has-weight-master/setup-scripts/./install.sh
