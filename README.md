@@ -20,18 +20,18 @@ Develop p5js template<br>
 This following instructions will install the Arduino IDE, the NPM package manager and setup the template project.
 Dont forget to change your timezone and enable SSH if you need it. You can do this by running the following cmd in the terminal:
 
-      `sudo raspi-config`
+    `sudo raspi-config`
 
 Make sure you are connected to the internet
 
 1. Download the repository with the following terminal cmd:
       
-      `cd ~/ && wget https://github.com/usernamevalis/this-speed-has-weight/archive/master.zip`
+    `cd ~/ && wget https://github.com/usernamevalis/this-speed-has-weight/archive/master.zip`
 
 2. Unzip the downloaded folder and make the install script executable:
 
-      `unzip master.zip && chmod +x this-speed-has-weight-master/setup-scripts/install.sh`
+    `unzip master.zip && chmod +x this-speed-has-weight-master/setup-scripts/install.sh`
 
 3. Run the install script inside of the 'setup-scripts' folder
 
-      `this-speed-has-weight-master/setup-scripts/./install.sh`
+    `this-speed-has-weight-master/setup-scripts/./install.sh`
