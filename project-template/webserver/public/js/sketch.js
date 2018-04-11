@@ -48,6 +48,7 @@ socket.on('pingTest',
 
 socket.on('sensorData',
   function(data) {
+    console.log(data)
     sensorData0 = data[0] / 4; //rather make sure the values sent are in the correct range, dont process here
     sensorData1 = data[1] / 4;
     sensorData2 = data[2] / 4;
