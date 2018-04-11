@@ -25,14 +25,20 @@ var sensorData2 = 0;
 function setup() {
   // put setup code here
   // need full screen canvas that is responsive to different screen size, especially mobile
-  createCanvas(displayWidth, displayHeight);
+  createCanvas(windowWidth, windowHeight);
 }
 
 function draw() {
   // put drawing code here
   background(sensorData0, sensorData1, sensorData2);
+
+  fill(255)
+  ellipse(width/2, sensorData1, 200, 200)
 }
 
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
 //====================Socket IO Events / messages==============//
 /* You cant use p5js funcitons inside of socket callbacks
  *  rather do any processing on server side / arduino inside
@@ -49,8 +55,8 @@ socket.on('pingTest',
 socket.on('sensorData',
   function(data) {
     console.log(data)
-    sensorData0 = data[0] / 4; //rather make sure the values sent are in the correct range, dont process here
-    sensorData1 = data[1] / 4;
-    sensorData2 = data[2] / 4;
+    sensorData0 = data[0]; //rather make sure the values sent are in the correct range, dont process here
+    sensorData1 = data[1];
+    sensorData2 = data[2];
   }
 );
