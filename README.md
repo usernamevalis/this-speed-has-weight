@@ -7,7 +7,7 @@ The server collects sensor information from an Arduino on the serial port and up
 
 The Arduio serial protocol is straight forward and easy add to more sensors/information. I will add descriptions shortly<br>
 
-<bold>Still to do:</bold><br>
+<b>Still to do:</b><br>
 Nathan<br>
 ~~Add install / setup scripts for nodejs for RPI<br>~~
 ~~Add Arduino code<br>~~
