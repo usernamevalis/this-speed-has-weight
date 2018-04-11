@@ -1,8 +1,8 @@
 /*
- * Arduino Sketch for Plataforma Workshop : This speed has weight
- * This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
- * Nathan Gates
- */
+   Arduino Sketch for Plataforma Workshop : This speed has weight
+   This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+   Nathan Gates 2018
+*/
 
 //Variables for sensors - analog  i/o for now. will update to i2c/spi interfaces when I have the sensors
 int sensor0 = A0;
@@ -22,12 +22,12 @@ void setup()
 {
   // start serial port at 115200 bps:
   Serial.begin(115200);
-  
+
   //define sensor inputs
   pinMode(sensor0, INPUT);
   pinMode(sensor1, INPUT);
   pinMode(sensor2, INPUT);
-  
+
   //define feedback led, onboard led on pin13
   pinMode(led, OUTPUT);
 }
@@ -39,7 +39,7 @@ void loop()
     inString = Serial.readStringUntil('\r');
   }
   //============== READ ==================//
-  if (inString == "read1") {
+  if (inString == "read") {
 
     //Read all the sensors and store in variables
     int sensorData0 = analogRead(sensor0);
@@ -47,7 +47,7 @@ void loop()
     int sensorData2 = analogRead(sensor2);
 
     //Process Data if necesary
-    
+
     //Send sensor values to nodejs server over serial(USB cable):
     //the entire data packet is split using a comma separator
     //the serialport module uses a built in parser to determine the end of the packet
@@ -80,17 +80,17 @@ void loop()
 
       String firstValue = inValue.substring(0, commaIndex);
       String secondValue = inValue.substring(commaIndex + 1, secondCommaIndex);
-      String thirdValue = inValue.substring(secondCommaIndex+1); // To the end of the string
+      String thirdValue = inValue.substring(secondCommaIndex + 1); // To the end of the string
 
       //convert String to ints
       int data0 = firstValue.toInt();
       int data1 = secondValue.toInt();
       int data2 = thirdValue.toInt();
-      
+
       //use this recevied data to do something like toggle the onboard LED
-      if(data0 == 12){
+      if (data0 == 12) {
         ledState = !ledState;
-        digitalWrite(led,ledState);
+        digitalWrite(led, ledState);
       }
 
       //clear string like above
@@ -99,15 +99,15 @@ void loop()
   }
 }
 
-void serialTest(){
+void serialTest() {
   digitalWrite(led , 1);
-  if(testCounter < 360){
+  if (testCounter < 360) {
     testCounter++;
-  }else{
+  } else {
     testCounter = 0;
   }
   Serial.println(testCounter);
   inString = "";
-  digitalWrite(led,0);
+  digitalWrite(led, 0);
 }
 
