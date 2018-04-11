@@ -12,6 +12,7 @@ Nathan<br>
 ~~Add install / setup scripts for nodejs for RPI<br>~~
 ~~Add Arduino code<br>~~
 ~~Extend socket API~~ This is sensor dependent, the basic template is easy enough to extend to suit your needs <br>
+Add Arduino sensor specific base code<br>
 Add boot scripts for RPI<br>
 
 Alejandro/Olivia<br>
