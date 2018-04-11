@@ -7,14 +7,14 @@ The server collects sensor information from an Arduino on the serial port and up
 
 The Arduio serial protocol is straight forward and easy add to more sensors/information. I will add descriptions shortly<br>
 
-Still to do:<br>
-Nathan
+<bold>Still to do:</bold><br>
+Nathan<br>
 ~~Add install / setup scripts for nodejs for RPI<br>~~
 ~~Add Arduino code<br>~~
 ~~Extend socket API~~ This is sensor dependent, the basic template is easy enough to extend to suit your needs <br>
 Add boot scripts for RPI<br>
 
-Alejandro/Olivia
+Alejandro/Olivia<br>
 Develop p5js template: Make it responsive and mobile friendly etc. <br>
 
 <b>Instructions:</b>
