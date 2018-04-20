@@ -71,9 +71,10 @@ myPort.on("open", function() {
    */
   parser.on('data', function(data) {
     var dataPacket = data.split(',');
-    var sensorData0 = dataPacket[0];
-    var sensorData1 = dataPacket[1];
-    var sensorData2 = dataPacket[2];
+    var x = dataPacket[0];
+    var y = dataPacket[1];
+    var z = dataPacket[2];
+    var sound = dataPacket[3];
     io.sockets.emit('sensorData', dataPacket);
   });
 });
@@ -90,12 +91,10 @@ myPort.on('close', function() {
 //=========================SocketIO====================//
 var io = require('socket.io').listen(server);
 
-
 //Connection event
 io.sockets.on('connection', function(socket) {
   console.log('a user connected');
 
-  emitFakeData()
   //send data to single user - this will happen as soon as they connect
   socket.emit('pingTest', 'ping');
 
@@ -109,18 +108,6 @@ io.sockets.on('connection', function(socket) {
     console.error('Network connection error', err);
   });
 
-  // Emit fake data array for testing purposes
-  function emitFakeData() {
-    var fakeData = Array(3).fill(0)
-    var fakeDataInterval = setInterval(function() {
-        fakeData = fakeData.map((data, index) => {
-          data += index
-          if(data > 255) return 0
-          return data
-        })
-        socket.emit('sensorData', fakeData);
-    }, 50);
-  }
 });
 
 //=========================Funcitons=================//
@@ -135,7 +122,17 @@ function pollArduino(initialDelay, pollingDelay) {
   }, initialDelay);
 }
 
-
+function fakeData() {
+  var fakeData = 0;
+  var fakeDataInterval = setInterval(function() {
+    if (fakeData < 255) {
+      fakeData += 10;
+      socket.emit('sensorData1', fakeData);
+    } else {
+      fakeData = 0;
+    }
+  }, 50);
+}
 
 
 //=========================Utilities=================//

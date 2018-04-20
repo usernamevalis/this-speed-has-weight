@@ -18,27 +18,35 @@ socket = io.connect();
  * async socket events update globals, which address
  * then used to update states/variables in the draw loop
  */
-var sensorData0 = 0;
-var sensorData1 = 0;
-var sensorData2 = 0;
+var x, y, z, sound = 0;
 
 function setup() {
   // put setup code here
   // need full screen canvas that is responsive to different screen size, especially mobile
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(windowWidth, windowHeight, WEBGL);
+  frameRate(30);
 }
 
 function draw() {
   // put drawing code here
-  background(sensorData0, sensorData1, sensorData2);
+  background(100);
 
-  fill(255)
-  ellipse(width/2, sensorData1, 200, 200)
+  pointLight(255, 200, 200, 400, 400, 500);
+  pointLight(200, 200, 255, -400, 400, 500);
+  pointLight(255, 255, 255, 0, 0, -500);
+
+  //noFill();
+  stroke(255);
+  push();
+  // translate(500, height * 0.35, -200);
+  rotateZ(radians(x));
+  rotateX(radians(y));
+  rotateY(radians(z));
+  sphere(300);
+  pop();
+
 }
 
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-}
 //====================Socket IO Events / messages==============//
 /* You cant use p5js funcitons inside of socket callbacks
  *  rather do any processing on server side / arduino inside
@@ -54,9 +62,12 @@ socket.on('pingTest',
 
 socket.on('sensorData',
   function(data) {
-    console.log(data)
-    sensorData0 = data[0]; //rather make sure the values sent are in the correct range, dont process here
-    sensorData1 = data[1];
-    sensorData2 = data[2];
+    x = data[0]; //rather make sure the values sent are in the correct range, dont process here
+    y = data[1];
+    z = data[2];
   }
 );
+
+function map_range(value, low1, high1, low2, high2) {
+  return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+}
