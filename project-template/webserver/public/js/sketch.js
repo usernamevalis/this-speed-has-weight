@@ -19,31 +19,23 @@ socket = io.connect();
  * then used to update states/variables in the draw loop
  */
 var x, y, z, sound = 0;
+var ipAddress;
+var portNumber;
 
 function setup() {
   // put setup code here
   // need full screen canvas that is responsive to different screen size, especially mobile
-  createCanvas(windowWidth, windowHeight, WEBGL);
+  createCanvas(windowWidth, windowHeight);
   frameRate(30);
 }
 
 function draw() {
   // put drawing code here
   background(100);
+  textSize(28)
+  textAlign(CENTER);
+  text(ipAddress + ":" + portNumber, windowWidth / 2, 30);
 
-  pointLight(255, 200, 200, 400, 400, 500);
-  pointLight(200, 200, 255, -400, 400, 500);
-  pointLight(255, 255, 255, 0, 0, -500);
-
-  //noFill();
-  stroke(255);
-  push();
-  // translate(500, height * 0.35, -200);
-  rotateZ(radians(x));
-  rotateX(radians(y));
-  rotateY(radians(z));
-  sphere(300);
-  pop();
 
 }
 
@@ -54,11 +46,14 @@ function draw() {
  *  Alternatively, process them in the draw loop
  */
 
-socket.on('pingTest',
+socket.on('IP',
   function(data) {
-    console.log("message from server:" + data);
+    //console.log("message from server:" + data);
+    ipAddress = data[0];
+    portNumber = data[1];
   }
 );
+
 
 socket.on('sensorData',
   function(data) {

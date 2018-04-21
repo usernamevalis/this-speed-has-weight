@@ -21,7 +21,8 @@ var util = require('util'); //console.log(util.inspect(myObject, false, null));
 var express = require('express');
 var app = express();
 var path = require('path');
-var portname = 'COM11';
+var portname = "/dev/ttyACM0"
+//var portname = 'COM11';
 
 //=========================Static File Webserver=================//
 app.use(express.static(__dirname + '/public'));
@@ -38,7 +39,7 @@ app.get('*', function(req, res, next) {
   res.sendFile(path.resolve('public/html/404.html'));
 });
 
-var server = app.listen(3000, function() {
+var server = app.listen(3000, '0.0.0.0', function() {
   console.log('Server is happenning on localIP: %s:%s', addresses, server.address().port);
 });
 
@@ -96,7 +97,11 @@ io.sockets.on('connection', function(socket) {
   console.log('a user connected');
 
   //send data to single user - this will happen as soon as they connect
-  socket.emit('pingTest', 'ping');
+  var ipInfo = [
+    addresses,
+    server.address().port
+  ]
+  socket.emit('IP', ipInfo);
 
   //Disconnection event
   socket.on('disconnect', function() {
@@ -120,18 +125,6 @@ function pollArduino(initialDelay, pollingDelay) {
       myPort.write("read\r");
     }, pollingDelay);
   }, initialDelay);
-}
-
-function fakeData() {
-  var fakeData = 0;
-  var fakeDataInterval = setInterval(function() {
-    if (fakeData < 255) {
-      fakeData += 10;
-      socket.emit('sensorData1', fakeData);
-    } else {
-      fakeData = 0;
-    }
-  }, 50);
 }
 
 

@@ -24,7 +24,34 @@ echo "Backing up project template into 'backups' folder"
 cp -r "$DIR/../project-template" "$DIR/../backups/"
 
 echo "Moving master archive to backups"
-mv "$DIR/../../master.zip"  "$DIR/../backups/" 
+mv "$DIR/../../master.zip"  "$DIR/../backups/"
+
+echo "setting up chromium autostart"
+FILE="/home/pi/.config/lxsession/LXDE-pi/autostart"
+
+/bin/cat <<EOM >$FILE
+@lxpanel --profile LXDE-pi
+@pcmanfm --desktop --profile LXDE-pi
+@xscreensaver -no-splash
+@point-rpi
+@xset s noblank
+@xset s off
+@xset –dpms
+@chromium-browser http://localhost:3000/
+EOM
+
+echo "setting up nodejs auto start"
+echo "installing forever"
+sudo npm install forever -g
+
+echo "setting up cron @reboot"
+#write out current crontab
+crontab -r
+crontab -l > mycron
+#echo new cron into cron file
+echo "@reboot /usr/local/bin/forever start /home/pi/this-speed-has-weight-master/project-template/webse$#install new cron file
+crontab mycron
+rm mycron
 
 echo "done and done."
 echo "goodbye"
