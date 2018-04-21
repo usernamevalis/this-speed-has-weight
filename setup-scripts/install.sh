@@ -49,7 +49,7 @@ echo "setting up cron @reboot"
 crontab -r
 crontab -l > mycron
 #echo new cron into cron file
-echo "@reboot /usr/local/bin/forever start /home/pi/this-speed-has-weight-master/project-template/webse$#install new cron file
+echo "@reboot /usr/local/bin/forever start /home/pi/this-speed-has-weight/project-template/webse$#install new cron file
 crontab mycron
 rm mycron
 
