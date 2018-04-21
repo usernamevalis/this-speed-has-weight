@@ -37,7 +37,7 @@ FILE="/home/pi/.config/lxsession/LXDE-pi/autostart"
 @xset s noblank
 @xset s off
 @xset –dpms
-@chromium-browser http://localhost:3000/
+@chromium-browser --incognito --kiosk http://localhost:3000/
 EOM
 
 echo "setting up nodejs auto start"
