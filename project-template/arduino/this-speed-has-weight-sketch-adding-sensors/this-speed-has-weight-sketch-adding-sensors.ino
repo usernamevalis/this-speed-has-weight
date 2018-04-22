@@ -12,6 +12,7 @@
 #include "Adafruit_TSL2591.h"
 #include <Adafruit_BME280.h>
 
+#define DEBUG 0
 #define SEALEVELPRESSURE_HPA (1013.25)
 
 Adafruit_BME280 bme; // I2C
@@ -51,18 +52,24 @@ void setup()
   bool status;
   status = bme.begin();
   if (!status) {
-    Serial.println("Could not find a valid BME280 sensor, check wiring!");
-    //while (1);
+    if (DEBUG) {
+      Serial.println("Could not find a valid BME280 sensor, check wiring!");
+      while (1);
+    }
   }
 
   if (tsl.begin())
   {
-    Serial.println(F("Found a TSL2591 sensor"));
+    if (DEBUG) {
+      Serial.println(F("Found a TSL2591 sensor"));
+    }
   }
   else
   {
-    Serial.println(F("No TSL2591found ... check your wiring?"));
-    //while (1);
+    if (DEBUG) {
+      Serial.println(F("No TSL2591found ... check your wiring?"));
+      while (1);
+    }
   }
 
   /* Configure the sensor */
@@ -72,9 +79,10 @@ void setup()
   /* Initialise the sensor */
   if (!bno.begin())
   {
-    /* There was a problem detecting the BNO055 ... check your connections */
-    Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-    while (1);
+    if (DEBUG) {
+      Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+      while (1);
+    }
   }
 }
 

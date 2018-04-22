@@ -72,18 +72,9 @@ myPort.on("open", function() {
    */
   parser.on('data', function(data) {
     var dataPacket = data.split(',');
-    var x_orientation = dataPacket[0];
-    var y_orientation = dataPacket[1];
-    var z_orientation = dataPacket[2];
-    var soundLevel = dataPacket[3];
-    var temp = dataPacket[4];
-    var pressure = dataPacket[5];
-    var altitude = dataPacket[6];
-    var humidity = dataPacket[7];
-    var irLight = dataPacket[8];
-    var visibleLight = dataPacket[9];
-    var fullLight = dataPacket[10];
-    var lux = dataPacket[11];
+    // for (var i = 0; i < dataPacket.length; i++) {
+    //   console.log(dataPacket[i]);
+    // }
     io.sockets.emit('sensorData', dataPacket);
   });
 });

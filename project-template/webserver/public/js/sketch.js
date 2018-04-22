@@ -18,11 +18,12 @@ socket = io.connect();
  * async socket events update globals, which address
  * then used to update states/variables in the draw loop
  */
-var _data = [_xo, _yo, _zo, _soundLevel, _temp, _pres, _alti, _humi, _ir, _vis, _full, _lux];
+var _data = [12];
 var data = {
   x_orientation: 0,
   y_orientation: 0,
   z_orientation: 0,
+  soundLevel: 0,
   temperature: 0,
   pressure: 0,
   altitude: 0,
@@ -32,9 +33,12 @@ var data = {
   fullLight: 0,
   lux: 0
 };
-var soundLevel = 0;
-var ipAddress;
-var portNumber;
+
+var ipData = {
+  ipAddress: 0,
+  portNumber: 0
+};
+
 var updating = true;
 
 function setup() {
@@ -46,21 +50,25 @@ function setup() {
 
 //rawest possible data as feasible - need to adjust per project as needed
 //soundLevel : 0.0 -5.0;
-//x,y,z : 0-360;
+//x,y,z : 0/360 , -180/180, -180/180;
 function draw() {
   fill(255);
   background(100);
   //display ip address on screen
   displayIP();
+
+  //update sensor data object
   updateSensorData();
 
-  x_orientation = map(x_orientation, 0, 360, 0, 255);
-  y_orientation = map(y_orientation, 0, 360, 0, 255);
-  z_orientation = map(z_orientation, 0, 360, 0, 255);
+  //process data
+  data.x_orientation = map(data.x_orientation, 0, 360, 0, 255);
+  data.y_orientation = map(data.y_orientation, -180, 180, 0, 255);
+  data.z_orientation = map(data.z_orientation, -180, 180, 0, 255);
 
+  //change colour
+  fill(data.x_orientation, data.y_orientation, data.z_orientation);
   // An ellipse
-  fill(x_orientation, y_orientation, z_orientation);
-  ellipse(windowWidth / 2, windowHeight / 2, soundLevel * 100, soundLevel * 100);
+  ellipse(windowWidth / 2, windowHeight / 2, data.soundLevel * 100, data.soundLevel * 100);
 
 }
 
@@ -70,21 +78,21 @@ function draw() {
  *  and just send ready to use info in the websocket.
  *  Alternatively, process them in the draw loop
  */
-
 socket.on('IP',
   function(data) {
-    //console.log("message from server:" + data);
-    ipAddress = data[0];
-    portNumber = data[1];
+    var counter = 0;
+    for (var i = 0; i < data.length; i++) {
+      ipData.ipAddress = data[0];
+      ipData.portNumber = data[1];
+    }
   }
 );
-
 
 socket.on('sensorData',
   function(data) {
     updating = true;
     for (var i = 0; i < data.length; i++) {
-      _data[0] = data[0];
+      _data[i] = data[i];
     }
     updating = false;
   }
@@ -93,7 +101,6 @@ socket.on('sensorData',
 /*
  *  Functions
  */
-
 function map_range(value, low1, high1, low2, high2) {
   return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
@@ -101,27 +108,22 @@ function map_range(value, low1, high1, low2, high2) {
 function displayIP() {
   textSize(28)
   textAlign(CENTER);
-  text(ipAddress + ":" + portNumber, windowWidth / 2, 30);
+  text(ipData.ipAddress + ":" + ipData.portNumber, windowWidth / 2, 30);
 }
 
 function updateSensorData() {
   if (!updating) {
-    console.log(starting);
+    var counter = 0;
     for (var key in data) {
-      console.log(key);
+      if (data.hasOwnProperty(key)) {
+        data[key] = _data[counter];
+        counter++
+      }
     }
-
-    // x_orientation = _xo;
-    // y_orientation = _yo;
-    // z_orientation = _zo;
-    // soundLevel = _soundLevel;
-    // temperature = _temp;
-    // pressure = _pres;
-    // altitude = _ alti;
-    // humidity = _humi;
-    // irLight = _ir;
-    // visibleLight = _vis;
-    // fullLight = _full;
-    // lux = _lux;
+    // for (var key in data) {
+    //   if (data.hasOwnProperty(key)) {
+    //     console.log(key + " -> " + data[key]);
+    //   }
+    // }
   }
 }
