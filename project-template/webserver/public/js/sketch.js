@@ -18,8 +18,20 @@ socket = io.connect();
  * async socket events update globals, which address
  * then used to update states/variables in the draw loop
  */
-var _xo, _yo, _zo, _soundLevel = 0;
-var x_orientation, y_orientation, z_orientation = 0;
+var _data = [_xo, _yo, _zo, _soundLevel, _temp, _pres, _alti, _humi, _ir, _vis, _full, _lux];
+var data = {
+  x_orientation: 0,
+  y_orientation: 0,
+  z_orientation: 0,
+  temperature: 0,
+  pressure: 0,
+  altitude: 0,
+  humidity: 0,
+  irLight: 0,
+  visibleLight: 0,
+  fullLight: 0,
+  lux: 0
+};
 var soundLevel = 0;
 var ipAddress;
 var portNumber;
@@ -71,10 +83,9 @@ socket.on('IP',
 socket.on('sensorData',
   function(data) {
     updating = true;
-    _xo = data[0]; //rather make sure the values sent are in the correct range, dont process here
-    _yo = data[1];
-    _zo = data[2];
-    _soundLevel = data[3];
+    for (var i = 0; i < data.length; i++) {
+      _data[0] = data[0];
+    }
     updating = false;
   }
 );
@@ -95,9 +106,22 @@ function displayIP() {
 
 function updateSensorData() {
   if (!updating) {
-    x_orientation = _xo;
-    y_orientation = _yo;
-    z_orientation = _zo;
-    soundLevel = _soundLevel;
+    console.log(starting);
+    for (var key in data) {
+      console.log(key);
+    }
+
+    // x_orientation = _xo;
+    // y_orientation = _yo;
+    // z_orientation = _zo;
+    // soundLevel = _soundLevel;
+    // temperature = _temp;
+    // pressure = _pres;
+    // altitude = _ alti;
+    // humidity = _humi;
+    // irLight = _ir;
+    // visibleLight = _vis;
+    // fullLight = _full;
+    // lux = _lux;
   }
 }

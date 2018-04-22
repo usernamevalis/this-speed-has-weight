@@ -80,9 +80,10 @@ myPort.on("open", function() {
     var pressure = dataPacket[5];
     var altitude = dataPacket[6];
     var humidity = dataPacket[7];
-    var pressure = dataPacket[5];
-    var altitude = dataPacket[6];
-    var humidity = dataPacket[7];
+    var irLight = dataPacket[8];
+    var visibleLight = dataPacket[9];
+    var fullLight = dataPacket[10];
+    var lux = dataPacket[11];
     io.sockets.emit('sensorData', dataPacket);
   });
 });
