@@ -21,8 +21,8 @@ var util = require('util'); //console.log(util.inspect(myObject, false, null));
 var express = require('express');
 var app = express();
 var path = require('path');
-var portname = "/dev/ttyACM0"
-//var portname = 'COM11';
+//var portname = "/dev/ttyACM0"
+var portname = 'COM11';
 
 //=========================Static File Webserver=================//
 app.use(express.static(__dirname + '/public'));
@@ -72,10 +72,17 @@ myPort.on("open", function() {
    */
   parser.on('data', function(data) {
     var dataPacket = data.split(',');
-    var x = dataPacket[0];
-    var y = dataPacket[1];
-    var z = dataPacket[2];
-    var sound = dataPacket[3];
+    var x_orientation = dataPacket[0];
+    var y_orientation = dataPacket[1];
+    var z_orientation = dataPacket[2];
+    var soundLevel = dataPacket[3];
+    var temp = dataPacket[4];
+    var pressure = dataPacket[5];
+    var altitude = dataPacket[6];
+    var humidity = dataPacket[7];
+    var pressure = dataPacket[5];
+    var altitude = dataPacket[6];
+    var humidity = dataPacket[7];
     io.sockets.emit('sensorData', dataPacket);
   });
 });

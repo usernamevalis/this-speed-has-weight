@@ -10,7 +10,7 @@
  */
 
 
-// socket io variabl
+// socket io variable
 var socket;
 socket = io.connect();
 
@@ -18,9 +18,12 @@ socket = io.connect();
  * async socket events update globals, which address
  * then used to update states/variables in the draw loop
  */
-var x, y, z, sound = 0;
+var _xo, _yo, _zo, _soundLevel = 0;
+var x_orientation, y_orientation, z_orientation = 0;
+var soundLevel = 0;
 var ipAddress;
 var portNumber;
+var updating = true;
 
 function setup() {
   // put setup code here
@@ -29,13 +32,23 @@ function setup() {
   frameRate(30);
 }
 
+//rawest possible data as feasible - need to adjust per project as needed
+//soundLevel : 0.0 -5.0;
+//x,y,z : 0-360;
 function draw() {
-  // put drawing code here
+  fill(255);
   background(100);
-  textSize(28)
-  textAlign(CENTER);
-  text(ipAddress + ":" + portNumber, windowWidth / 2, 30);
+  //display ip address on screen
+  displayIP();
+  updateSensorData();
 
+  x_orientation = map(x_orientation, 0, 360, 0, 255);
+  y_orientation = map(y_orientation, 0, 360, 0, 255);
+  z_orientation = map(z_orientation, 0, 360, 0, 255);
+
+  // An ellipse
+  fill(x_orientation, y_orientation, z_orientation);
+  ellipse(windowWidth / 2, windowHeight / 2, soundLevel * 100, soundLevel * 100);
 
 }
 
@@ -57,12 +70,34 @@ socket.on('IP',
 
 socket.on('sensorData',
   function(data) {
-    x = data[0]; //rather make sure the values sent are in the correct range, dont process here
-    y = data[1];
-    z = data[2];
+    updating = true;
+    _xo = data[0]; //rather make sure the values sent are in the correct range, dont process here
+    _yo = data[1];
+    _zo = data[2];
+    _soundLevel = data[3];
+    updating = false;
   }
 );
 
+/*
+ *  Functions
+ */
+
 function map_range(value, low1, high1, low2, high2) {
   return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+}
+
+function displayIP() {
+  textSize(28)
+  textAlign(CENTER);
+  text(ipAddress + ":" + portNumber, windowWidth / 2, 30);
+}
+
+function updateSensorData() {
+  if (!updating) {
+    x_orientation = _xo;
+    y_orientation = _yo;
+    z_orientation = _zo;
+    soundLevel = _soundLevel;
+  }
 }
