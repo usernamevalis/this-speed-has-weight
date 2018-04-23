@@ -1,19 +1,28 @@
 /*
    Arduino Sketch for Plataforma Workshop : This speed has weight
+   This code is WIP
    This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
    Nathan Gates 2018
 */
+
+#define DEBUG 1
+#define SEALEVELPRESSURE_HPA (1013.25)
 
 //Library includes
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
-#include "Adafruit_TSL2591.h"
 #include <Adafruit_BME280.h>
 
-#define DEBUG 0
-#define SEALEVELPRESSURE_HPA (1013.25)
+//Software I2C
+//#include "Adafruit_TSL2591.h"
+#define SCL_PORT PORTC
+#define SCL_PIN 3 //A3
+#define SDA_PORT PORTC
+#define SDA_PIN 2 //A2
+#include <SoftI2CMaster.h>
+#include "Adafruit_TSL2591Soft.h"
 
 Adafruit_BME280 bme; // I2C
 Adafruit_BNO055 bno = Adafruit_BNO055(55);
@@ -49,39 +58,36 @@ void setup()
   pinMode(led, OUTPUT);
   pinMode(mic, INPUT);
 
+
+  //BNO
+  /* Initialise the sensor */
+
+
   bool status;
   status = bme.begin();
   if (!status) {
     if (DEBUG) {
       Serial.println("Could not find a valid BME280 sensor, check wiring!");
-      while (1);
+      //while (1);
     }
   }
 
-  if (tsl.begin())
-  {
-    if (DEBUG) {
-      Serial.println(F("Found a TSL2591 sensor"));
-    }
-  }
-  else
+  if (!tsl.begin())
   {
     if (DEBUG) {
       Serial.println(F("No TSL2591found ... check your wiring?"));
-      while (1);
+      //while (1);
     }
   }
 
   /* Configure the sensor */
   configureSensor();
-
-  //BNO
-  /* Initialise the sensor */
+  
   if (!bno.begin())
   {
     if (DEBUG) {
-      Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-      while (1);
+      Serial.println("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+      //while (1);
     }
   }
 }
