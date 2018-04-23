@@ -91,6 +91,7 @@ socket.on('IP',
 socket.on('sensorData',
   function(data) {
     updating = true;
+    console.log(_data[3]);
     for (var i = 0; i < data.length; i++) {
       _data[i] = data[i];
     }
