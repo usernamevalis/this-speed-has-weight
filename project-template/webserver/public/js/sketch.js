@@ -68,7 +68,7 @@ function draw() {
   //change colour
   fill(data.x_orientation, data.y_orientation, data.z_orientation);
   // An ellipse
-  ellipse(windowWidth / 2, windowHeight / 2, data.soundLevel * 100, data.soundLevel * 100);
+  ellipse(windowWidth / 2, windowHeight / 2, data.soundLevel * 10, data.soundLevel * 10);
 
 }
 

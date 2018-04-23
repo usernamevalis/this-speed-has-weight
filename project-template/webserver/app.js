@@ -21,8 +21,15 @@ var util = require('util'); //console.log(util.inspect(myObject, false, null));
 var express = require('express');
 var app = express();
 var path = require('path');
-//var portname = "/dev/ttyACM0"
-var portname = 'COM11';
+var os = process.platform;
+var portname;
+if (os == "linux") {
+  portname = "/dev/ttyACM0"
+} else {
+  portname = 'COM11';
+}
+
+
 
 //=========================Static File Webserver=================//
 app.use(express.static(__dirname + '/public'));
