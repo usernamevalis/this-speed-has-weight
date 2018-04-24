@@ -69,7 +69,7 @@ function draw() {
   textSize(26);
   var x = 50
   var y = 50;
-  var yInc = windowHeight / ((Object.keys(data).length) / 2);
+  var yInc = windowHeight / ((Object.keys(data).length) * 1.5);
   var xInc = windowWidth / 4;
   var counter = 0;
 
@@ -77,7 +77,7 @@ function draw() {
     textAlign(LEFT);
     if (data.hasOwnProperty(key)) {
       var val = data[key];
-      if (counter <= int((Object.keys(data).length))) {
+      if (counter <= int((Object.keys(data).length) / 2)) {
         text(key + ' : ' + val, x, y += yInc);
         counter++;
       } else {
