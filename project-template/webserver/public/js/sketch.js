@@ -70,7 +70,7 @@ function draw() {
   var x = 50
   var y = 50;
   var yInc = windowHeight / ((Object.keys(data).length));
-  var xInc = windowWidth / 4;
+  var xInc = windowWidth / 2;
   var counter = 0;
 
   for (var key in data) {
