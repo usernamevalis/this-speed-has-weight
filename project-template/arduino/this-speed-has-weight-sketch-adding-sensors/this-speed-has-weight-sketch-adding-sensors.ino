@@ -108,7 +108,7 @@ void loop()
   if (Serial.available() > 0) {
     inString = Serial.readStringUntil('\r');
   }
-//  updateGps();
+  updateGps();
   //break up read events if lines get 'clogged'
   //let nodejs request info as needed
   //============== READ ==================//
@@ -119,7 +119,7 @@ void loop()
     readMic();
     advancedReadTSL();
     readBme280();
-//    readGpsInfo();
+    //    readGpsInfo();
     //Process Data if necesary
 
     //Send sensor values to nodejs server over serial(USB cable):
@@ -151,9 +151,9 @@ void loop()
     Serial.print(',');
     Serial.print(lux);
     Serial.print(',');
-    Serial.print(latitude,6);
+    Serial.print(latitude, 6);
     Serial.print(',');
-    Serial.print(longitude,6);
+    Serial.print(longitude, 6);
     Serial.print(',');
     Serial.print(altGps);
     Serial.print(',');
