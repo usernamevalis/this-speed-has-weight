@@ -18,7 +18,7 @@ socket = io.connect();
  * async socket events update globals, which address
  * then used to update states/variables in the draw loop
  */
-var _data = [12];
+var _data = [17];
 var data = {
   x_orientation: 0,
   y_orientation: 0,
@@ -31,7 +31,12 @@ var data = {
   irLight: 0,
   visibleLight: 0,
   fullLight: 0,
-  lux: 0
+  lux: 0,
+  lat: 0,
+  long: 0,
+  altGps: 0,
+  speedKm: 0,
+  sats: 0
 };
 
 var ipData = {
@@ -91,7 +96,6 @@ socket.on('IP',
 socket.on('sensorData',
   function(data) {
     updating = true;
-    console.log(_data[3]);
     for (var i = 0; i < data.length; i++) {
       _data[i] = data[i];
     }
@@ -120,6 +124,7 @@ function updateSensorData() {
         data[key] = _data[counter];
         counter++
       }
+      console.log(data.sats);
     }
     // for (var key in data) {
     //   if (data.hasOwnProperty(key)) {

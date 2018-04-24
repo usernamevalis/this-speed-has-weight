@@ -56,11 +56,14 @@ void loop()
   printGPSInfo();
 
   // "Smart delay" looks for GPS data while the Arduino's not doing anything else
-  smartDelay(1000); 
+  
 }
 
 void printGPSInfo()
 {
+     while (gpsPort.available()){
+      tinyGPS.encode(gpsPort.read());
+   }
   // Print latitude, longitude, altitude in feet, course, speed, date, time,
   // and the number of visible satellites.
   SerialMonitor.print("Lat: "); SerialMonitor.println(tinyGPS.location.lat(), 6);

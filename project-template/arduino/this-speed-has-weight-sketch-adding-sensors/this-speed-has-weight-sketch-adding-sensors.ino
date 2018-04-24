@@ -23,6 +23,17 @@
 #define SDA_PIN 2 //A2
 #include <SoftI2CMaster.h>
 #include "Adafruit_TSL2591Soft.h"
+#include <TinyGPS++.h> // Include the TinyGPS++ library
+#include <SoftwareSerial.h>
+
+#define GPS_BAUD 9600 // GPS module baud rate. GP3906 defaults to 9600.
+#define ARDUINO_GPS_RX 4 // GPS TX, Arduino RX pin
+#define ARDUINO_GPS_TX 3 // GPS RX, Arduino TX pin
+#define gpsPort ssGPS  // Alternatively, use Serial1 on the Leonardo
+#define SerialMonitor Serial
+
+TinyGPSPlus tinyGPS; // Create a TinyGPSPlus object
+SoftwareSerial ssGPS(ARDUINO_GPS_TX, ARDUINO_GPS_RX); // Create a SoftwareSerial
 
 Adafruit_BME280 bme; // I2C
 Adafruit_BNO055 bno = Adafruit_BNO055(55);
@@ -32,6 +43,8 @@ int x_orientation, y_orientation, z_orientation = 0;
 uint32_t luminosity = 0;
 uint16_t irLight, fullLight, lux, visibleLight = 0;
 int temp, pressure, altitude, humidity = 0;
+double latitude, longitude, altGps, speedKm = 5 ;
+int sats = 5;
 
 //microphone
 float filtered = 0.0;
@@ -53,16 +66,21 @@ void setup()
 {
   // start serial port at 115200 bps:
   Serial.begin(115200);
+  gpsPort.begin(GPS_BAUD);
 
   //define feedback led, onboard led on pin13
   pinMode(led, OUTPUT);
   pinMode(mic, INPUT);
 
-
   //BNO
+  if (!bno.begin())
+  {
+    if (DEBUG) {
+      Serial.println("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+      //while (1);
+    }
+  }
   /* Initialise the sensor */
-
-
   bool status;
   status = bme.begin();
   if (!status) {
@@ -79,25 +97,20 @@ void setup()
       //while (1);
     }
   }
+  configureTslSensor();
 
-  /* Configure the sensor */
-  configureSensor();
-  
-  if (!bno.begin())
-  {
-    if (DEBUG) {
-      Serial.println("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-      //while (1);
-    }
-  }
 }
 
 void loop()
 {
+
   // wait for the node server to contact us
   if (Serial.available() > 0) {
     inString = Serial.readStringUntil('\r');
   }
+  updateGps();
+  //break up read events if lines get 'clogged'
+  //let nodejs request info as needed
   //============== READ ==================//
   if (inString == "read") {
 
@@ -106,6 +119,7 @@ void loop()
     readMic();
     advancedReadTSL();
     readBme280();
+//    readGpsInfo();
     //Process Data if necesary
 
     //Send sensor values to nodejs server over serial(USB cable):
@@ -135,8 +149,17 @@ void loop()
     Serial.print(',');
     Serial.print(fullLight);
     Serial.print(',');
-    Serial.println(lux);
-
+    Serial.print(lux);
+    Serial.print(',');
+    Serial.print(latitude,6);
+    Serial.print(',');
+    Serial.print(longitude,6);
+    Serial.print(',');
+    Serial.print(altGps);
+    Serial.print(',');
+    Serial.print(speedKm);
+    Serial.print(',');
+    Serial.println(sats);
     inString = "";
   }
 
@@ -220,7 +243,7 @@ void readBNO() {
     Configures the gain and integration time for the TSL2591
 */
 /**************************************************************************/
-void configureSensor(void)
+void configureTslSensor(void)
 {
   // You can change the gain on the fly, to adapt to brighter/dimmer light situations
   //tsl.setGain(TSL2591_GAIN_LOW);    // 1x gain (bright light)
@@ -369,3 +392,53 @@ void readBme280(void) {
   humidity = bme.readHumidity(); // %
 }
 
+/**************************************************************************/
+/*
+    Read GPS and associated helper functions
+*/
+/**************************************************************************/
+void updateGps() {
+  while (gpsPort.available()) {
+    tinyGPS.encode(gpsPort.read()); // Send it to the encode function
+  }
+  latitude = tinyGPS.location.lat();
+  longitude = tinyGPS.location.lng();
+  altGps = tinyGPS.altitude.meters();
+  speedKm = tinyGPS.speed.kmph();
+  sats = tinyGPS.satellites.value();
+}
+
+/*
+
+  Serial.println(gps.location.lat(), 6); // Latitude in degrees (double)
+  Serial.println(gps.location.lng(), 6); // Longitude in degrees (double)
+  Serial.print(gps.location.rawLat().negative ? "-" : "+");
+  Serial.println(gps.location.rawLat().deg); // Raw latitude in whole degrees
+  Serial.println(gps.location.rawLat().billionths);// ... and billionths (u16/u32)
+  Serial.print(gps.location.rawLng().negative ? "-" : "+");
+  Serial.println(gps.location.rawLng().deg); // Raw longitude in whole degrees
+  Serial.println(gps.location.rawLng().billionths);// ... and billionths (u16/u32)
+  Serial.println(gps.date.value()); // Raw date in DDMMYY format (u32)
+  Serial.println(gps.date.year()); // Year (2000+) (u16)
+  Serial.println(gps.date.month()); // Month (1-12) (u8)
+  Serial.println(gps.date.day()); // Day (1-31) (u8)
+  Serial.println(gps.time.value()); // Raw time in HHMMSSCC format (u32)
+  Serial.println(gps.time.hour()); // Hour (0-23) (u8)
+  Serial.println(gps.time.minute()); // Minute (0-59) (u8)
+  Serial.println(gps.time.second()); // Second (0-59) (u8)
+  Serial.println(gps.time.centisecond()); // 100ths of a second (0-99) (u8)
+  Serial.println(gps.speed.value()); // Raw speed in 100ths of a knot (i32)
+  Serial.println(gps.speed.knots()); // Speed in knots (double)
+  Serial.println(gps.speed.mph()); // Speed in miles per hour (double)
+  Serial.println(gps.speed.mps()); // Speed in meters per second (double)
+  Serial.println(gps.speed.kmph()); // Speed in kilometers per hour (double)
+  Serial.println(gps.course.value()); // Raw course in 100ths of a degree (i32)
+  Serial.println(gps.course.deg()); // Course in degrees (double)
+  Serial.println(gps.altitude.value()); // Raw altitude in centimeters (i32)
+  Serial.println(gps.altitude.meters()); // Altitude in meters (double)
+  Serial.println(gps.altitude.miles()); // Altitude in miles (double)
+  Serial.println(gps.altitude.kilometers()); // Altitude in kilometers (double)
+  Serial.println(gps.altitude.feet()); // Altitude in feet (double)
+  Serial.println(gps.satellites.value()); // Number of satellites in use (u32)
+  Serial.println(gps.hdop.value()); // Horizontal Dim. of Precision (100ths-i32)
+*/
