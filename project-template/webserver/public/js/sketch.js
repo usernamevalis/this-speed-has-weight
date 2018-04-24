@@ -69,13 +69,20 @@ function draw() {
   textSize(26);
   var x = 50
   var y = 50;
-  var yInc = windowHeight / ((Object.keys(data).length));
+  var yInc = windowHeight / ((Object.keys(data).length) / 2);
+  var xInc = windowWidth / 4;
+  var counter = 0;
 
   for (var key in data) {
     textAlign(LEFT);
     if (data.hasOwnProperty(key)) {
-      var val = data[key]
-      text(key + ' : ' + val, x, y += yInc);
+      var val = data[key];
+      if (counter <= int((Object.keys(data).length))) {
+        text(key + ' : ' + val, x, y += yInc);
+        counter++;
+      } else {
+        text(key + ' : ' + val, x + xInc, y -= yInc);
+      }
     }
   }
 }
