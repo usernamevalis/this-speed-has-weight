@@ -65,16 +65,19 @@ function draw() {
   //update sensor data object
   updateSensorData();
 
-  //process data
-  data.x_orientation = map(data.x_orientation, 0, 360, 0, 255);
-  data.y_orientation = map(data.y_orientation, -180, 180, 0, 255);
-  data.z_orientation = map(data.z_orientation, -180, 180, 0, 255);
+  //display data
+  textSize(26);
+  var x = 50
+  var y = 50;
+  var yInc = windowHeight / ((Object.keys(data).length) * 1.5);
 
-  //change colour
-  fill(data.x_orientation, data.y_orientation, data.z_orientation);
-  // An ellipse
-  ellipse(windowWidth / 2, windowHeight / 2, data.soundLevel * 10, data.soundLevel * 10);
-
+  for (var key in data) {
+    textAlign(LEFT);
+    if (data.hasOwnProperty(key)) {
+      var val = data[key]
+      text(key + ' : ' + val, x, y += yInc);
+    }
+  }
 }
 
 //====================Socket IO Events / messages==============//
@@ -124,7 +127,6 @@ function updateSensorData() {
         data[key] = _data[counter];
         counter++
       }
-      console.log(data.sats);
     }
     // for (var key in data) {
     //   if (data.hasOwnProperty(key)) {
