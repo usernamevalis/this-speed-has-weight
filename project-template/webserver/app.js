@@ -23,13 +23,13 @@ var app = express();
 var path = require('path');
 var os = process.platform;
 var portname;
+var contact = false;
+
 if (os == "linux") {
   portname = "/dev/ttyACM0"
 } else {
   portname = 'COM11';
 }
-
-
 
 //=========================Static File Webserver=================//
 app.use(express.static(__dirname + '/public'));
@@ -62,27 +62,22 @@ myPort.pipe(parser);
 
 myPort.on("open", function() {
   console.log('open');
-
-  /* Asking for information from the Arduino
-   * sending "read\r" down the serial port askas the arduino to send its sensor information over the serial port
-   * myPort.write("read/r")
-   * The function below waits 2 seconds before asking for data the first time, and from then one polls the Arduino
-   * every 100ms
-   */
-  pollArduino(2000, 250);
-  /* Receiving information from the Arduino
-   *  whenever data is received on the serial port this callback event is fired.
-   *  inside of it we split the received information using the comma as our delimiter
-   *  all the individual pieces of information are stored in there sent order, in the dataPacket array
-   *  as an example we are sending the entire dataPacket array over socket io to the p5js app
-   */
+  //pollArduino(2000, 250);
   parser.on('data', function(data) {
     var dataPacket = data.split(',');
-    // for (var i = 0; i < dataPacket.length; i++) {
-    //   console.log(dataPacket[i]);
-    // }
-    console.log(dataPacket[3]);
-    io.sockets.emit('sensorData', dataPacket);
+    console.log(dataPacket[0]);
+    console.log(Boolean(contact));
+    if (Boolean(contact) == true) {
+      myPort.write("r\r");
+      for (var i = 0; i < dataPacket.length; i++) {
+        console.log(dataPacket[i]);
+      }
+      io.sockets.emit('sensorData', dataPacket);
+      myPort.write("r\r");
+    } else {
+      myPort.write('r\r');
+      contact = true;
+    }
   });
 });
 
@@ -125,17 +120,17 @@ io.sockets.on('connection', function(socket) {
 
 function pollArduino(initialDelay, pollingDelay) {
   var receive = setInterval(function() {
-    myPort.write("read\r");
+    myPort.write("r\r");
     clearInterval(receive);
     receive = setInterval(function() {
-      myPort.write("read\r");
+      myPort.write("r\r");
     }, pollingDelay);
   }, initialDelay);
 }
 
 function initArduino(initialDelay) {
   var receive = setInterval(function() {
-    myPort.write("read\r");
+    myPort.write("r\r");
     clearInterval(receive);
   }, initialDelay);
 }

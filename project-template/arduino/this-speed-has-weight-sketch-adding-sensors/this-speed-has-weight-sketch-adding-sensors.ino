@@ -108,25 +108,17 @@ void loop()
   if (Serial.available() > 0) {
     inString = Serial.readStringUntil('\r');
   }
-  updateGps();
+
   //break up read events if lines get 'clogged'
   //let nodejs request info as needed
   //============== READ ==================//
-  if (inString == "read") {
-
-    //Read all the sensors and store in variables
+  if (inString == "r") {
+    updateGps();
     readBNO();
     readMic();
     advancedReadTSL();
     readBme280();
-    //    readGpsInfo();
-    //Process Data if necesary
-
-    //Send sensor values to nodejs server over serial(USB cable):
-    //the entire data packet is split using a comma separator
-    //the serialport module uses a built in parser to determine the end of the packet
-    //in this case we are use '\r\n' to signal this, that is the println()
-    // the data packet will look something like this: "data1, data2, data3\r\n"
+    //Read all the sensors and store in variables
     Serial.print(x_orientation);
     Serial.print(',');
     Serial.print(y_orientation);
@@ -163,42 +155,7 @@ void loop()
     inString = "";
   }
 
-  //============== WRITE ==================//
-  if (inString == "write") {
-    //read info from nodejs server and do something with that information on the arduino
-    //or use these branches to trigger different states instead of just read/write
-    //you need to figure out how to incoporate code into this structure
-    // or write your own code to handle the serial communication
-    //wait abit for the data to arrive
-    delay(10);
-    //read the data, same structure as before.Reading string untill '\r'
-    if (Serial.available()) {
-      String inValue = Serial.readStringUntil('\r');
-
-      //seperate values at comma;
-      int commaIndex = inValue.indexOf(',');
-      //  Search for the next comma just after the first
-      int secondCommaIndex = inValue.indexOf(',', commaIndex + 1);
-
-      String firstValue = inValue.substring(0, commaIndex);
-      String secondValue = inValue.substring(commaIndex + 1, secondCommaIndex);
-      String thirdValue = inValue.substring(secondCommaIndex + 1); // To the end of the string
-
-      //convert String to ints
-      int data0 = firstValue.toInt();
-      int data1 = secondValue.toInt();
-      int data2 = thirdValue.toInt();
-
-      //use this recevied data to do something like toggle the onboard LED
-      if (data0 == 12) {
-        ledState = !ledState;
-        digitalWrite(led, ledState);
-      }
-
-      //clear string like above
-      inString = "";
-    }
-  }
+    serialFlush();
 }
 
 
@@ -212,114 +169,12 @@ void readBNO() {
   sensors_event_t event;
   bno.getEvent(&event);
 
-  /* Board layout:
-         +----------+
-         |         *| RST   PITCH  ROLL  HEADING
-     ADR |*        *| SCL
-     INT |*        *| SDA     ^            /->
-     PS1 |*        *| GND     |            |
-     PS0 |*        *| 3VO     Y    Z-->    \-X
-         |         *| VIN
-         +----------+
-  */
-
-  /* The processing sketch expects data as roll, pitch, heading */
-  //  Serial.print(F("Orientation: "));
-  //  Serial.print((float)event.orientation.x);
-  //  Serial.print(F(" "));
-  //  Serial.print((float)event.orientation.y);
-  //  Serial.print(F(" "));
-  //  Serial.print((float)event.orientation.z);
-  //  Serial.println(F(""));
   x_orientation = (int)event.orientation.x;
   y_orientation = (int)event.orientation.y;
   z_orientation = (int)event.orientation.z;
 
 }
 
-
-/**************************************************************************/
-/*
-    Configures the gain and integration time for the TSL2591
-*/
-/**************************************************************************/
-void configureTslSensor(void)
-{
-  // You can change the gain on the fly, to adapt to brighter/dimmer light situations
-  //tsl.setGain(TSL2591_GAIN_LOW);    // 1x gain (bright light)
-  tsl.setGain(TSL2591_GAIN_MED);      // 25x gain
-  //tsl.setGain(TSL2591_GAIN_HIGH);   // 428x gain
-
-  // Changing the integration time gives you a longer time over which to sense light
-  // longer timelines are slower, but are good in very low light situtations!
-  //tsl.setTiming(TSL2591_INTEGRATIONTIME_100MS);  // shortest integration time (bright light)
-  // tsl.setTiming(TSL2591_INTEGRATIONTIME_200MS);
-  tsl.setTiming(TSL2591_INTEGRATIONTIME_300MS);
-  // tsl.setTiming(TSL2591_INTEGRATIONTIME_400MS);
-  // tsl.setTiming(TSL2591_INTEGRATIONTIME_500MS);
-  // tsl.setTiming(TSL2591_INTEGRATIONTIME_600MS);  // longest integration time (dim light)
-
-  /* Display the gain and integration time for reference sake */
-  //  Serial.println(F("------------------------------------"));
-  //  Serial.print  (F("Gain:         "));
-  tsl2591Gain_t gain = tsl.getGain();
-  //  switch (gain)
-  //  {
-  //    case TSL2591_GAIN_LOW:
-  //      Serial.println(F("1x (Low)"));
-  //      break;
-  //    case TSL2591_GAIN_MED:
-  //      Serial.println(F("25x (Medium)"));
-  //      break;
-  //    case TSL2591_GAIN_HIGH:
-  //      Serial.println(F("428x (High)"));
-  //      break;
-  //    case TSL2591_GAIN_MAX:
-  //      Serial.println(F("9876x (Max)"));
-  //      break;
-  //  }
-  //  Serial.print  (F("Timing:       "));
-  //  Serial.print((tsl.getTiming() + 1) * 100, DEC);
-  //  Serial.println(F(" ms"));
-  //  Serial.println(F("------------------------------------"));
-  //  Serial.println(F(""));
-}
-
-
-/**************************************************************************/
-/*
-    Displays some basic information on this sensor from the unified
-    sensor API sensor_t type (see Adafruit_Sensor for more information)
-*/
-/**************************************************************************/
-void displaySensorDetails(void)
-{
-  sensor_t sensorBNO;
-  bno.getSensor(&sensorBNO);
-  Serial.println("------------------------------------");
-  Serial.print  ("Sensor:       "); Serial.println(sensorBNO.name);
-  Serial.print  ("Driver Ver:   "); Serial.println(sensorBNO.version);
-  Serial.print  ("Unique ID:    "); Serial.println(sensorBNO.sensor_id);
-  Serial.print  ("Max Value:    "); Serial.print(sensorBNO.max_value); Serial.println(" xxx");
-  Serial.print  ("Min Value:    "); Serial.print(sensorBNO.min_value); Serial.println(" xxx");
-  Serial.print  ("Resolution:   "); Serial.print(sensorBNO.resolution); Serial.println(" xxx");
-  Serial.println("------------------------------------");
-  Serial.println("");
-  delay(500);
-
-  sensor_t sensorTSL;
-  tsl.getSensor(&sensorTSL);
-  Serial.println(F("------------------------------------"));
-  Serial.print  (F("Sensor:       ")); Serial.println(sensorTSL.name);
-  Serial.print  (F("Driver Ver:   ")); Serial.println(sensorTSL.version);
-  Serial.print  (F("Unique ID:    ")); Serial.println(sensorTSL.sensor_id);
-  Serial.print  (F("Max Value:    ")); Serial.print(sensorTSL.max_value); Serial.println(F(" lux"));
-  Serial.print  (F("Min Value:    ")); Serial.print(sensorTSL.min_value); Serial.println(F(" lux"));
-  Serial.print  (F("Resolution:   ")); Serial.print(sensorTSL.resolution, 4); Serial.println(F(" lux"));
-  Serial.println(F("------------------------------------"));
-  Serial.println(F(""));
-  delay(500);
-}
 
 
 /**************************************************************************/
@@ -362,17 +217,11 @@ void readMic() {
 /**************************************************************************/
 void advancedReadTSL(void)
 {
-  // More advanced data read example. Read 32 bits with top 16 bits IR, bottom 16 bits full spectrum
-  // That way you can do whatever math and comparisons you want!
+
   uint32_t lum = tsl.getFullLuminosity();
   uint16_t ir, full;
   ir = lum >> 16;
   full = lum & 0xFFFF;
-  //  Serial.print(F("[ ")); Serial.print(millis()); Serial.print(F(" ms ] "));
-  //  Serial.print(F("IR: ")); Serial.print(ir);  Serial.print(F("  "));
-  //  Serial.print(F("Full: ")); Serial.print(full); Serial.print(F("  "));
-  //  Serial.print(F("Visible: ")); Serial.print(full - ir); Serial.print(F("  "));
-  //  Serial.print(F("Lux: ")); Serial.println(tsl.calculateLux(full, ir), 6);
 
   irLight = ir;
   visibleLight = (full - ir);
@@ -408,37 +257,71 @@ void updateGps() {
   sats = tinyGPS.satellites.value();
 }
 
+/**************************************************************************/
 /*
-
-  Serial.println(gps.location.lat(), 6); // Latitude in degrees (double)
-  Serial.println(gps.location.lng(), 6); // Longitude in degrees (double)
-  Serial.print(gps.location.rawLat().negative ? "-" : "+");
-  Serial.println(gps.location.rawLat().deg); // Raw latitude in whole degrees
-  Serial.println(gps.location.rawLat().billionths);// ... and billionths (u16/u32)
-  Serial.print(gps.location.rawLng().negative ? "-" : "+");
-  Serial.println(gps.location.rawLng().deg); // Raw longitude in whole degrees
-  Serial.println(gps.location.rawLng().billionths);// ... and billionths (u16/u32)
-  Serial.println(gps.date.value()); // Raw date in DDMMYY format (u32)
-  Serial.println(gps.date.year()); // Year (2000+) (u16)
-  Serial.println(gps.date.month()); // Month (1-12) (u8)
-  Serial.println(gps.date.day()); // Day (1-31) (u8)
-  Serial.println(gps.time.value()); // Raw time in HHMMSSCC format (u32)
-  Serial.println(gps.time.hour()); // Hour (0-23) (u8)
-  Serial.println(gps.time.minute()); // Minute (0-59) (u8)
-  Serial.println(gps.time.second()); // Second (0-59) (u8)
-  Serial.println(gps.time.centisecond()); // 100ths of a second (0-99) (u8)
-  Serial.println(gps.speed.value()); // Raw speed in 100ths of a knot (i32)
-  Serial.println(gps.speed.knots()); // Speed in knots (double)
-  Serial.println(gps.speed.mph()); // Speed in miles per hour (double)
-  Serial.println(gps.speed.mps()); // Speed in meters per second (double)
-  Serial.println(gps.speed.kmph()); // Speed in kilometers per hour (double)
-  Serial.println(gps.course.value()); // Raw course in 100ths of a degree (i32)
-  Serial.println(gps.course.deg()); // Course in degrees (double)
-  Serial.println(gps.altitude.value()); // Raw altitude in centimeters (i32)
-  Serial.println(gps.altitude.meters()); // Altitude in meters (double)
-  Serial.println(gps.altitude.miles()); // Altitude in miles (double)
-  Serial.println(gps.altitude.kilometers()); // Altitude in kilometers (double)
-  Serial.println(gps.altitude.feet()); // Altitude in feet (double)
-  Serial.println(gps.satellites.value()); // Number of satellites in use (u32)
-  Serial.println(gps.hdop.value()); // Horizontal Dim. of Precision (100ths-i32)
+    Configures the gain and integration time for the TSL2591
 */
+/**************************************************************************/
+void configureTslSensor(void)
+{
+  // You can change the gain on the fly, to adapt to brighter/dimmer light situations
+  //tsl.setGain(TSL2591_GAIN_LOW);    // 1x gain (bright light)
+  tsl.setGain(TSL2591_GAIN_MED);      // 25x gain
+  //tsl.setGain(TSL2591_GAIN_HIGH);   // 428x gain
+
+  // Changing the integration time gives you a longer time over which to sense light
+  // longer timelines are slower, but are good in very low light situtations!
+  //tsl.setTiming(TSL2591_INTEGRATIONTIME_100MS);  // shortest integration time (bright light)
+  // tsl.setTiming(TSL2591_INTEGRATIONTIME_200MS);
+  tsl.setTiming(TSL2591_INTEGRATIONTIME_300MS);
+  // tsl.setTiming(TSL2591_INTEGRATIONTIME_400MS);
+  // tsl.setTiming(TSL2591_INTEGRATIONTIME_500MS);
+  // tsl.setTiming(TSL2591_INTEGRATIONTIME_600MS);  // longest integration time (dim light)
+
+  /* Display the gain and integration time for reference sake */
+  //  Serial.println(F("------------------------------------"));
+  //  Serial.print  (F("Gain:         "));
+  tsl2591Gain_t gain = tsl.getGain();
+}
+
+
+/**************************************************************************/
+/*
+    Displays some basic information on this sensor from the unified
+    sensor API sensor_t type (see Adafruit_Sensor for more information)
+*/
+/**************************************************************************/
+void displaySensorDetails(void)
+{
+  sensor_t sensorBNO;
+  bno.getSensor(&sensorBNO);
+  Serial.println("------------------------------------");
+  Serial.print  ("Sensor:       "); Serial.println(sensorBNO.name);
+  Serial.print  ("Driver Ver:   "); Serial.println(sensorBNO.version);
+  Serial.print  ("Unique ID:    "); Serial.println(sensorBNO.sensor_id);
+  Serial.print  ("Max Value:    "); Serial.print(sensorBNO.max_value); Serial.println(" xxx");
+  Serial.print  ("Min Value:    "); Serial.print(sensorBNO.min_value); Serial.println(" xxx");
+  Serial.print  ("Resolution:   "); Serial.print(sensorBNO.resolution); Serial.println(" xxx");
+  Serial.println("------------------------------------");
+  Serial.println("");
+  delay(500);
+
+  sensor_t sensorTSL;
+  tsl.getSensor(&sensorTSL);
+  Serial.println(F("------------------------------------"));
+  Serial.print  (F("Sensor:       ")); Serial.println(sensorTSL.name);
+  Serial.print  (F("Driver Ver:   ")); Serial.println(sensorTSL.version);
+  Serial.print  (F("Unique ID:    ")); Serial.println(sensorTSL.sensor_id);
+  Serial.print  (F("Max Value:    ")); Serial.print(sensorTSL.max_value); Serial.println(F(" lux"));
+  Serial.print  (F("Min Value:    ")); Serial.print(sensorTSL.min_value); Serial.println(F(" lux"));
+  Serial.print  (F("Resolution:   ")); Serial.print(sensorTSL.resolution, 4); Serial.println(F(" lux"));
+  Serial.println(F("------------------------------------"));
+  Serial.println(F(""));
+  delay(500);
+}
+void serialFlush() {
+  while (Serial.available() > 0) {
+    char t = Serial.read();
+  }
+}
+
