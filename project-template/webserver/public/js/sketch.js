@@ -69,7 +69,7 @@ function draw() {
   textSize(26);
   var x = 50
   var y = 50;
-  var yInc = windowHeight / ((Object.keys(data).length));
+  var yInc = windowHeight / ((Object.keys(data).length) / 1.5);
   var xInc = windowWidth / 2;
   var counter = 0;
 
