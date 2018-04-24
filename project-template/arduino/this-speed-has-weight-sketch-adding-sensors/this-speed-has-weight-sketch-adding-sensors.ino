@@ -108,7 +108,7 @@ void loop()
   if (Serial.available() > 0) {
     inString = Serial.readStringUntil('\r');
   }
-  updateGps();
+//  updateGps();
   //break up read events if lines get 'clogged'
   //let nodejs request info as needed
   //============== READ ==================//

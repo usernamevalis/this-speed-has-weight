@@ -69,8 +69,7 @@ myPort.on("open", function() {
    * The function below waits 2 seconds before asking for data the first time, and from then one polls the Arduino
    * every 100ms
    */
-  pollArduino(2000, 100);
-
+  pollArduino(2000, 250);
   /* Receiving information from the Arduino
    *  whenever data is received on the serial port this callback event is fired.
    *  inside of it we split the received information using the comma as our delimiter
@@ -82,6 +81,7 @@ myPort.on("open", function() {
     // for (var i = 0; i < dataPacket.length; i++) {
     //   console.log(dataPacket[i]);
     // }
+    console.log(dataPacket[3]);
     io.sockets.emit('sensorData', dataPacket);
   });
 });
@@ -133,6 +133,12 @@ function pollArduino(initialDelay, pollingDelay) {
   }, initialDelay);
 }
 
+function initArduino(initialDelay) {
+  var receive = setInterval(function() {
+    myPort.write("read\r");
+    clearInterval(receive);
+  }, initialDelay);
+}
 
 //=========================Utilities=================//
 //Get Local Ip Address
