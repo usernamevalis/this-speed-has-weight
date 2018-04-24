@@ -65,8 +65,8 @@ myPort.on("open", function() {
   //pollArduino(2000, 250);
   parser.on('data', function(data) {
     var dataPacket = data.split(',');
-    console.log(dataPacket[0]);
-    console.log(Boolean(contact));
+    // console.log(dataPacket[0]);
+    // console.log(Boolean(contact));
     if (Boolean(contact) == true) {
       myPort.write("r\r");
       // for (var i = 0; i < dataPacket.length; i++) {
