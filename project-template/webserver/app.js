@@ -69,9 +69,9 @@ myPort.on("open", function() {
     console.log(Boolean(contact));
     if (Boolean(contact) == true) {
       myPort.write("r\r");
-      for (var i = 0; i < dataPacket.length; i++) {
-        console.log(dataPacket[i]);
-      }
+      // for (var i = 0; i < dataPacket.length; i++) {
+      //   console.log(dataPacket[i]);
+      // }
       io.sockets.emit('sensorData', dataPacket);
       myPort.write("r\r");
     } else {
