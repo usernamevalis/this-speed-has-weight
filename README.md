@@ -38,3 +38,7 @@ TO begin make sure you are connected to the internet. Then open a terminal and c
 3. Run the install script inside of the 'setup-scripts' folder
 
     `this-speed-has-weight-master/setup-scripts/./install.sh`
+    
+ Here are all the commands in one line that you can copy and paste
+ 
+    `cd ~/ && wget https://github.com/usernamevalis/this-speed-has-weight/archive/master.zip && unzip master.zip && chmod +x this-speed-       has-weight-master/setup-scripts/install.sh && this-speed-has-weight-master/setup-scripts/./install.sh`
