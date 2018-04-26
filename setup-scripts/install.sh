@@ -4,6 +4,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo "updating"
 yes Y | sudo apt-get update
 
+echo "enabling SSH"
+sudo touch /boot/ssh
+
 echo "installing npm"
 yes Y | sudo apt-get install npm
 echo "done."
