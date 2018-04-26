@@ -37,21 +37,32 @@ FILE="/home/pi/.config/lxsession/LXDE-pi/autostart"
 @xset s noblank
 @xset s off
 @xset –dpms
-@chromium-browser --incognito --kiosk http://localhost:3000/
+@chromium-browser --incognito http://localhost:3000/
 EOM
 
 echo "setting up nodejs auto start"
 echo "installing forever"
 sudo npm install forever -g
 
+#clear crontab to prevent mulitple entries
 echo "setting up cron @reboot"
 #write out current crontab
 crontab -r
 crontab -l > mycron
 #echo new cron into cron file
-echo "@reboot /usr/local/bin/forever start /home/pi/this-speed-has-weight/project-template/webse$#install new cron file
+echo "@reboot /usr/local/bin/forever start /home/pi/this-speed-has-weight/project-template/webserver/app.js" >> mycron
+#install new cron file
 crontab mycron
 rm mycron
+
+# #install lcd driver
+# echo "downloading LCD driver"
+# wget https://www.waveshare.com/w/upload/3/34/LCD-show-180331.tar.gz -P /boot/
+# #setup lcd driver and touch screen
+# echo "installing LCD driver"
+# tar -xzvf /boot/LCD-show-*.tar.gz -C /boot/
+# chmod +x /boot/LCD-show/LCD5-show
+# /boot/LCD-show/./LCD5-show
 
 echo "done and done."
 echo "goodbye"
