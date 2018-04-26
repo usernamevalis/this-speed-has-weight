@@ -41,4 +41,4 @@ TO begin make sure you are connected to the internet. Then open a terminal and c
     
  Here are all the commands in one line that you can copy and paste
  
-    `cd ~/ && wget https://github.com/usernamevalis/this-speed-has-weight/archive/master.zip && unzip master.zip && chmod +x this-speed-       has-weight-master/setup-scripts/install.sh && this-speed-has-weight-master/setup-scripts/./install.sh`
+    cd ~/ && wget https://github.com/usernamevalis/this-speed-has-weight/archive/master.zip && unzip master.zip && chmod +x this-speed-       has-weight-master/setup-scripts/install.sh && this-speed-has-weight-master/setup-scripts/./install.sh
