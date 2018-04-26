@@ -25,6 +25,10 @@ Dont forget to change your timezone and enable SSH if you need it. You can do th
 
 `sudo raspi-config`
 
+NB This script enables ssh so you must change your default password using the 
+`passwd` 
+command in the terminal
+
 TO begin make sure you are connected to the internet. Then open a terminal and copy and paste the following lines of code, one by one.
 
 1. Download the repository with the following terminal cmd:
