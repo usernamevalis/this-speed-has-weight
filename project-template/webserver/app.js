@@ -10,7 +10,9 @@
  *
  * Install project dependecies by running 'npm install' inside of the project folder, from a terminal
  * This app is asynchronous to a certain degree so bear in mind when troubleshooting that not all is as it seems
- * everything is event driven.
+ * most things are event driven.
+ *
+ *This is WIP
  *
  * This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
  * Nathan Gates 2018
@@ -24,6 +26,7 @@ var path = require('path');
 var os = process.platform;
 var portname;
 var contact = false;
+var transmissionDelay = 100;
 
 if (os == "linux") {
   portname = "/dev/ttyACM0"
@@ -52,29 +55,27 @@ var server = app.listen(3000, '0.0.0.0', function() {
 
 //======================Serial=================//
 const SerialPort = require('serialport');
-const Readline = SerialPort.parsers.Readline;
+const Readline = require('parser-readline');
 
 var myPort = new SerialPort(portname, {
   baudRate: 115200
 });
-const parser = new Readline();
-myPort.pipe(parser);
+const parser = myPort.pipe(new Readline({
+  delimiter: '\n'
+}))
 
 myPort.on("open", function() {
   console.log('open');
-  //pollArduino(2000, 250);
   parser.on('data', function(data) {
     var dataPacket = data.split(',');
-    // console.log(dataPacket[0]);
-    // console.log(Boolean(contact));
     if (Boolean(contact) == true) {
-      myPort.write("r\r");
-      // for (var i = 0; i < dataPacket.length; i++) {
-      //   console.log(dataPacket[i]);
-      // }
+      for (var i = 0; i < dataPacket.length; i++) {
+        console.log(dataPacket[i]);
+      }
       io.sockets.emit('sensorData', dataPacket);
       myPort.write("r\r");
     } else {
+      myPort.write("write\rtransDelay," + transmissionDelay + "\r");
       myPort.write('r\r');
       contact = true;
     }
@@ -102,6 +103,7 @@ io.sockets.on('connection', function(socket) {
     addresses,
     server.address().port
   ]
+
   socket.emit('IP', ipInfo);
 
   //Disconnection event

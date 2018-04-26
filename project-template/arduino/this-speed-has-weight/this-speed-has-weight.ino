@@ -5,13 +5,12 @@
 
 */
 
-#include <RBD_SerialManager.h> // https://github.com/alextaujenis/RBD_SerialManager
-
-RBD::SerialManager usb;
-
-
 #define DEBUG 0
-#define SEALEVELPRESSURE_HPA (1013.25)
+#define BNO 1
+#define BME 1
+#define TSL 0
+#define GPS 0
+#define MIC 0
 
 //Library includes
 #include <Wire.h>
@@ -36,6 +35,7 @@ RBD::SerialManager usb;
 #define ARDUINO_GPS_TX 3 // GPS RX, Arduino TX pin
 #define gpsPort ssGPS  // Alternatively, use Serial1 on the Leonardo
 #define SerialMonitor Serial
+#define SEALEVELPRESSURE_HPA (1013.25)
 
 TinyGPSPlus tinyGPS; // Create a TinyGPSPlus object
 SoftwareSerial ssGPS(ARDUINO_GPS_TX, ARDUINO_GPS_RX); // Create a SoftwareSerial
@@ -45,11 +45,11 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55);
 Adafruit_TSL2591 tsl = Adafruit_TSL2591(2591); // pass in a number for the sensor identifier (for your use later)
 
 int x_orientation, y_orientation, z_orientation = 0;
-uint32_t luminosity = 0;
-uint16_t irLight, fullLight, lux, visibleLight = 0;
-int temp, pressure, altitude, humidity = 0;
-double latitude, longitude, altGps, speedKm = 5 ;
-int sats = 5;
+int irLight, fullLight, lux, visibleLight = 0;
+int temp, pressure, alt, humidity = 0;
+double latitude, longitude = 0;
+int sats, altGps, speedKm = 0;
+int transmissionDelay = 100;
 
 //microphone
 float filtered = 0.0;
@@ -70,67 +70,114 @@ int testCounter = 0;
 void setup()
 {
   // start serial port at 115200 bps:
-  usb.start();
-  usb.setFlag('\r');
+  Serial.begin(115200);
   gpsPort.begin(GPS_BAUD);
 
   //define feedback led, onboard led on pin13
   pinMode(led, OUTPUT);
-  digitalWrite(led,HIGH);  
+  digitalWrite(led, HIGH);
   setupSensors();
-  digitalWrite(led,LOW);
+  digitalWrite(led, LOW);
   Serial.println("ready");
 }
 
 void loop()
 {
-
-  if (usb.onReceive()) {
-    // example serial command: up
-    if (usb.isCmd("r")) {
-      updateGps();
+  if (Serial.available() > 0) {
+    inString = Serial.readStringUntil('\r');
+  }
+  if (inString == "r")  {
+    serialFlush();
+    delay(transmissionDelay);
+    if (BNO) {
       readBNO();
+    }
+    if (GPS) {
+      updateGps();
+    }
+    if (MIC) {
       readMic();
+    }
+    if (TSL) {
       advancedReadTSL();
+    }
+    if (BME) {
       readBme280();
-      //Read all the sensors and store in variables
-      Serial.print(x_orientation);
-      Serial.print(',');
-      Serial.print(y_orientation);
-      Serial.print(',');
-      Serial.print(z_orientation);
-      Serial.print(',');
-      Serial.print(soundLevel);;
-      Serial.print(',');
-      Serial.print(temp);
-      Serial.print(',');
-      Serial.print(pressure);
-      Serial.print(',');
-      Serial.print(altitude);
-      Serial.print(',');
-      Serial.print(humidity);
-      Serial.print(',');
-      Serial.print(irLight);
-      Serial.print(',');
-      Serial.print(visibleLight);
-      Serial.print(',');
-      Serial.print(fullLight);
-      Serial.print(',');
-      Serial.print(lux);
-      Serial.print(',');
+    }
+    //Read all the sensors and store in variables
+    Serial.print(x_orientation);
+    Serial.print(',');
+    Serial.print(y_orientation);
+    Serial.print(',');
+    Serial.print(z_orientation);
+    Serial.print(',');
+    Serial.print(temp);
+    Serial.print(',');
+    Serial.print(pressure);
+    Serial.print(',');
+    Serial.print(alt);
+    Serial.print(',');
+    Serial.print(humidity);
+    Serial.print(',');
+    Serial.print(irLight);
+    Serial.print(',');
+    Serial.print(lux);
+    Serial.print(',');
+    if (GPS) {
       Serial.print(latitude, 6);
       Serial.print(',');
       Serial.print(longitude, 6);
+    } else {
+      Serial.print(0);
       Serial.print(',');
-      Serial.print(altGps);
-      Serial.print(',');
-      Serial.print(speedKm);
-      Serial.print(',');
-      Serial.println(sats);
+      Serial.print(0);
+    }
+    Serial.print(',');
+    Serial.print(altGps);
+    Serial.print(',');
+    Serial.print(speedKm);
+    Serial.print(',');
+    Serial.print(sats);
+    Serial.print(',');
+    if (MIC) {
+      Serial.print(soundLevel);
+    } else {
+      Serial.print(0);
+    }
+    Serial.println();
+    inString = "";
+  }
+
+  //============== WRITE ==================//
+  if (inString == "write") {
+    delay(10);
+    if (Serial.available()) {
+      String inValue = Serial.readStringUntil('\r');
+
+      //seperate values at comma;
+      int commaIndex = inValue.indexOf(',');
+      //  Search for the next comma just after the first
+      int secondCommaIndex = inValue.indexOf(',', commaIndex + 1);
+
+      String firstValue = inValue.substring(0, commaIndex);
+      String secondValue = inValue.substring(commaIndex + 1, secondCommaIndex);
+      String thirdValue = inValue.substring(secondCommaIndex + 1); // To the end of the string
+
+      //convert String to ints
+      int data0 = firstValue.toInt();
+      int data1 = secondValue.toInt();
+      int data2 = thirdValue.toInt();
+
+      if (firstValue == "transDelay") {
+        transmissionDelay = data1;
+        Serial.println(transmissionDelay);
+      }
+      //clear string like above
       inString = "";
     }
   }
 }
+
 
 /**************************************************************************/
 /*
@@ -197,9 +244,9 @@ void advancedReadTSL(void)
   full = lum & 0xFFFF;
 
   irLight = ir;
-  visibleLight = (full - ir);
-  fullLight = full;
-  lux = (tsl.calculateLux(full, ir), 6);
+  //visibleLight = (full - ir);
+  //fullLight = full;
+  lux = tsl.calculateLux(full, ir);
 }
 
 /**************************************************************************/
@@ -210,7 +257,7 @@ void advancedReadTSL(void)
 void readBme280(void) {
   temp = bme.readTemperature(); //c
   pressure = bme.readPressure() / 100.0F; //hpa
-  altitude = bme.readAltitude(SEALEVELPRESSURE_HPA);// m
+  alt = bme.readAltitude(SEALEVELPRESSURE_HPA);// m
   humidity = bme.readHumidity(); // %
 }
 
@@ -244,9 +291,9 @@ void configureTslSensor(void)
 
   // Changing the integration time gives you a longer time over which to sense light
   // longer timelines are slower, but are good in very low light situtations!
-  //tsl.setTiming(TSL2591_INTEGRATIONTIME_100MS);  // shortest integration time (bright light)
+  tsl.setTiming(TSL2591_INTEGRATIONTIME_100MS);  // shortest integration time (bright light)
   // tsl.setTiming(TSL2591_INTEGRATIONTIME_200MS);
-  tsl.setTiming(TSL2591_INTEGRATIONTIME_300MS);
+  //tsl.setTiming(TSL2591_INTEGRATIONTIME_300MS);
   // tsl.setTiming(TSL2591_INTEGRATIONTIME_400MS);
   // tsl.setTiming(TSL2591_INTEGRATIONTIME_500MS);
   // tsl.setTiming(TSL2591_INTEGRATIONTIME_600MS);  // longest integration time (dim light)
@@ -299,34 +346,38 @@ void serialFlush() {
 }
 
 void setupSensors() {
-
   pinMode(mic, INPUT);
-
   //BNO
-  if (!bno.begin())
-  {
-    if (DEBUG) {
-      Serial.println("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-      //while (1);
+  if (BNO) {
+    if (!bno.begin())
+    {
+      if (DEBUG) {
+        Serial.println("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+        //while (1);
+      }
     }
   }
   /* Initialise the sensor */
-  bool status;
-  status = bme.begin();
-  if (!status) {
-    if (DEBUG) {
-      Serial.println("Could not find a valid BME280 sensor, check wiring!");
-      //while (1);
+  if (BME) {
+    bool status;
+    status = bme.begin();
+    if (!status) {
+      if (DEBUG) {
+        Serial.println("Could not find a valid BME280 sensor, check wiring!");
+        //while (1);
+      }
     }
   }
 
-  if (!tsl.begin())
-  {
-    if (DEBUG) {
-      Serial.println(F("No TSL2591found ... check your wiring?"));
-      //while (1);
+  if (TSL) {
+    if (!tsl.begin())
+    {
+      if (DEBUG) {
+        Serial.println(F("No TSL2591found ... check your wiring?"));
+        //while (1);
+      }
     }
+    configureTslSensor();
   }
-  configureTslSensor();
 }
 

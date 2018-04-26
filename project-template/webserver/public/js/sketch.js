@@ -18,25 +18,23 @@ socket = io.connect();
  * async socket events update globals, which address
  * then used to update states/variables in the draw loop
  */
-var _data = [17];
+var _data = [];
 var data = {
   x_orientation: 0,
   y_orientation: 0,
   z_orientation: 0,
-  soundLevel: 0,
   temperature: 0,
   pressure: 0,
   altitude: 0,
   humidity: 0,
   irLight: 0,
-  visibleLight: 0,
-  fullLight: 0,
   lux: 0,
   lat: 0,
   long: 0,
   altGps: 0,
   speedKm: 0,
-  sats: 0
+  sats: 0,
+  soundLevel: 0
 };
 
 var ipData = {
