@@ -24,6 +24,7 @@ sudo /opt/arduino-1.8.5/./install.sh
 echo "done."
 
 echo "copying across arduino libraries"
+mkdir /home/pi/Arduino/libraries
 cp -r "$DIR/../project-template/arduino/other/libraries/." "/home/pi/Arduino/libraries/"
 
 echo "Backing up project template into 'backups' folder"

@@ -6,9 +6,9 @@
 */
 
 #define DEBUG 0
-#define BNO 1
-#define BME 1
-#define TSL 0
+#define BNO 0
+#define BME 0
+#define TSL 1
 #define GPS 0
 #define MIC 0
 

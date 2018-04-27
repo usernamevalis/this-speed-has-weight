@@ -55,8 +55,9 @@ function setup() {
 //soundLevel : 0.0 -5.0;
 //x,y,z : 0/360 , -180/180, -180/180;
 function draw() {
-  fill(255);
-  background(100);
+
+  fill(0);
+  background(lux);
   //display ip address on screen
   displayIP();
 
@@ -65,7 +66,6 @@ function draw() {
 
   //
   defaultDisplay();
-
 }
 
 //====================Socket IO Events / messages==============//
