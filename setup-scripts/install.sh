@@ -62,6 +62,15 @@ echo "@reboot /usr/local/bin/forever start /home/pi/this-speed-has-weight-master
 crontab mycron
 rm mycron
 
+echo "Installing Processing3"
+wget http://download.processing.org/processing-3.3.7-linux-armv6hf.tgz
+tar xvfz processing-3.3.7-linux-armv6hf.tgz
+mv -r processing-3.3.7 /home/pi/
+chmod +x /home/pi/processing-3.3.7/install.sh
+/home/pi/processing-3.3.7/./install.sh
+
+# this changes the dimensions of the screeen so you should only do this when you want to use the LCD
+# its not the driver but the alterations to config.txt, which still needed to be added
 # #install lcd driver
 # echo "downloading LCD driver"
 # wget https://www.waveshare.com/w/upload/3/34/LCD-show-180331.tar.gz -P /boot/
