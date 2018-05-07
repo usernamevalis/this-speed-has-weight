@@ -56,8 +56,12 @@ function setup() {
 //x,y,z : 0/360 , -180/180, -180/180;
 function draw() {
 
-  fill(0);
-  background(lux);
+  fill(255);
+  background(0);
+
+  //example use of data object
+  //background(data.lux);
+
   //display ip address on screen
   displayIP();
 
