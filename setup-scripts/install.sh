@@ -72,13 +72,13 @@ chmod +x /home/pi/processing-3.3.7/install.sh
 # this changes the dimensions of the screeen so you should only do this when you want to use the LCD
 # its not the driver but the alterations to config.txt, which still needed to be added
 # #install lcd driver
-echo "downloading LCD driver"
-sudo wget https://www.waveshare.com/w/upload/3/34/LCD-show-180331.tar.gz -P /boot/
-#setup lcd driver and touch screen
-echo "installing LCD driver"
-sudo tar -xzvf /boot/LCD-show-*.tar.gz -C /boot/
-sudo chmod +x /boot/LCD-show/LCD5-show
-sudo /boot/LCD-show/./LCD5-show
+# echo "downloading LCD driver"
+# sudo wget https://www.waveshare.com/w/upload/3/34/LCD-show-180331.tar.gz -P /boot/
+# #setup lcd driver and touch screen
+# echo "installing LCD driver"
+# sudo tar -xzvf /boot/LCD-show-*.tar.gz -C /boot/
+# sudo chmod +x /boot/LCD-show/LCD5-show
+# sudo /boot/LCD-show/./LCD5-show
 
 echo "done and done."
 echo "goodbye"
