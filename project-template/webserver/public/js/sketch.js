@@ -33,8 +33,7 @@ var data = {
   long: 0,
   altGps: 0,
   speedKm: 0,
-  sats: 0,
-  soundLevel: 0
+  sats: 0
 };
 
 var ipData = {
@@ -141,12 +140,18 @@ function defaultDisplay() {
     textAlign(LEFT);
     if (data.hasOwnProperty(key)) {
       var val = data[key];
-      if (counter <= int((Object.keys(data).length) / 2)) {
+      if (counter < int((Object.keys(data).length) / 2)) {
         text(key + ' : ' + val, x, y += yInc);
         counter++;
       } else {
-        text(key + ' : ' + val, x + xInc, y -= yInc);
+        text(key + ' : ' + val, x + xInc, y);
+        y -= yInc;
       }
     }
   }
+}
+
+// when the window is resized the canvas is resized accordingly
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }

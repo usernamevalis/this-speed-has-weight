@@ -1,15 +1,21 @@
 /*
    Arduino Sketch for Plataforma Workshop : This speed has weight
-   This code is WIP
+   This code is WIP and was created ad hoc - there is lots of leftovers
    This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+   Nathan Gates 2018
+
+   still to do - add api to turn on / off certain sensors over serial, then create an interface for control on the webpage
 
 */
+
 
 #define DEBUG 0
 #define BNO 1
 #define BME 1
 #define TSL 1
 #define GPS 1
+//i have removed the section where i actually transfer the data over serial.
+//this doesnt work well as sampling delays data transer. I have in the function for posterity
 #define MIC 0
 
 //Library includes
@@ -138,12 +144,6 @@ void loop()
     Serial.print(speedKm);
     Serial.print(',');
     Serial.print(sats);
-    Serial.print(',');
-    if (MIC) {
-      Serial.print(soundLevel);
-    } else {
-      Serial.print(0);
-    }
     Serial.println();
     inString = "";
   }
@@ -380,4 +380,3 @@ void setupSensors() {
     configureTslSensor();
   }
 }
-
