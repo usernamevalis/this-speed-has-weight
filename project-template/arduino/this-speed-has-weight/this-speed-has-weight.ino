@@ -89,6 +89,8 @@ void setup()
 
 void loop()
 {
+//  updateGps();
+  
   if (Serial.available() > 0) {
     inString = Serial.readStringUntil('\r');
   }

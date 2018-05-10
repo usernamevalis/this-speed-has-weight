@@ -66,9 +66,20 @@ function draw() {
 
   //update sensor data object
   updateSensorData();
-
   //
   defaultDisplay();
+
+  push();
+  rotateDisplay(data.x_orientation);
+  pop();
+}
+
+function rotateDisplay(degrees) {
+  translate((windowWidth / 2) - 50, (windowHeight / 2) - 50);
+  rotate(radians(degrees));
+  rectMode(CENTER)
+  fill(255);
+  rect(0, 0, 100, 100);
 }
 
 //====================Socket IO Events / messages==============//

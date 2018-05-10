@@ -56,7 +56,7 @@ void loop()
   printGPSInfo();
 
   // "Smart delay" looks for GPS data while the Arduino's not doing anything else
-  
+  smartDelay(1000);
 }
 
 void printGPSInfo()
