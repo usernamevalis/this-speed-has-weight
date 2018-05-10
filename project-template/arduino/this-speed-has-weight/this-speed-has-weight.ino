@@ -55,7 +55,7 @@ int irLight, fullLight, lux, visibleLight = 0;
 int temp, pressure, alt, humidity = 0;
 double latitude, longitude = 0;
 int sats, altGps, speedKm = 0;
-int transmissionDelay = 100;
+int transmissionDelay = 50;
 
 //microphone
 float filtered = 0.0;
