@@ -77,6 +77,14 @@ int testCounter = 0;
 // BUTTON code
 int button1 = 2;
 int button1State = 0;
+int button2 = 3;
+int button2State = 0;
+int button3 = 4;
+int button3State = 0;
+int button4 = 5;
+int button4State = 0;
+int button5 = 6;
+int button5State = 0;
 
 void setup()
 {
@@ -92,11 +100,15 @@ void setup()
   Serial.println("ready");
 
   pinMode(button1, INPUT);
+  pinMode(button2, INPUT);
+  pinMode(button3, INPUT);
+  pinMode(button4, INPUT);
+  pinMode(button5, INPUT);
 }
 
 void loop()
 {
-//  updateGps();
+  //  updateGps();
 
   if (Serial.available() > 0) {
     inString = Serial.readStringUntil('\r');
@@ -119,7 +131,7 @@ void loop()
     if (BME) {
       readBme280();
     }
-    if(BUTTONS){
+    if (BUTTONS) {
       readButtons();
     }
     //Read all the sensors and store in variables
@@ -156,6 +168,17 @@ void loop()
     Serial.print(speedKm);
     Serial.print(',');
     Serial.print(sats);
+    if (BUTTONS) {
+      Serial.print(button1State);
+      Serial.print(',');
+      Serial.print(button2State);
+      Serial.print(',');
+      Serial.print(button3State);
+      Serial.print(',');
+      Serial.print(button4State);
+      Serial.print(',');
+      Serial.print(button5State);
+    }
     Serial.println();
     inString = "";
   }
@@ -393,7 +416,11 @@ void setupSensors() {
   }
 }
 
-void readButtons(){
+void readButtons() {
   button1State = digitalRead(button1);
+  button2State = digitalRead(button2);
+  button3State = digitalRead(button3);
+  button4State = digitalRead(button4);
+  button5State = digitalRead(button5);
 }
 

@@ -33,7 +33,12 @@ var data = {
   long: 0,
   altGps: 0,
   speedKm: 0,
-  sats: 0
+  sats: 0,
+  button1:0,
+  button2:0,
+  button3:0,
+  button4:0,
+  button5:0
 };
 
 var ipData = {
@@ -151,10 +156,11 @@ function defaultDisplay() {
     textAlign(LEFT);
     if (data.hasOwnProperty(key)) {
       var val = data[key];
-      if (counter < int((Object.keys(data).length) / 2)) {
+      if (counter <= int((Object.keys(data).length) / 2)) {
         text(key + ' : ' + val, x, y += yInc);
         counter++;
       } else {
+
         text(key + ' : ' + val, x + xInc, y);
         y -= yInc;
       }
