@@ -14,6 +14,7 @@
 #define BME 1
 #define TSL 1
 #define GPS 1
+#define BUTTONS 1
 //i have removed the section where i actually transfer the data over serial.
 //this doesnt work well as sampling delays data transer. I have in the function for posterity
 #define MIC 0
@@ -73,6 +74,10 @@ boolean ledState = false;
 String inString;
 int testCounter = 0;
 
+// BUTTON code
+int button1 = 2;
+int button1State = 0;
+
 void setup()
 {
   // start serial port at 115200 bps:
@@ -85,12 +90,14 @@ void setup()
   setupSensors();
   digitalWrite(led, LOW);
   Serial.println("ready");
+
+  pinMode(button1, INPUT);
 }
 
 void loop()
 {
 //  updateGps();
-  
+
   if (Serial.available() > 0) {
     inString = Serial.readStringUntil('\r');
   }
@@ -111,6 +118,9 @@ void loop()
     }
     if (BME) {
       readBme280();
+    }
+    if(BUTTONS){
+      readButtons();
     }
     //Read all the sensors and store in variables
     Serial.print(x_orientation);
@@ -382,3 +392,8 @@ void setupSensors() {
     configureTslSensor();
   }
 }
+
+void readButtons(){
+  button1State = digitalRead(button1);
+}
+
