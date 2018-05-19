@@ -62,6 +62,16 @@ echo "@reboot /usr/local/bin/forever start /home/pi/this-speed-has-weight-master
 crontab mycron
 rm mycron
 
+# echo "disable screen blanking"
+# FILE="/home/pi/.config/lxsession/LXDE-pi/autostart"
+#
+# /bin/cat <<EOM >$FILE
+# @xset s noblank
+# @xset s off
+# @xset –dpms
+# EOM
+
+
 # echo "Installing Processing3"
 # wget http://download.processing.org/processing-3.3.7-linux-armv6hf.tgz
 # tar xvfz processing-3.3.7-linux-armv6hf.tgz

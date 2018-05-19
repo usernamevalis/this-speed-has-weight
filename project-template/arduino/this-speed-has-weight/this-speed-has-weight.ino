@@ -90,6 +90,9 @@ void setup()
 {
   // start serial port at 115200 bps:
   Serial.begin(115200);
+  while(!Serial){
+
+  }
   gpsPort.begin(GPS_BAUD);
 
   //define feedback led, onboard led on pin13
@@ -169,6 +172,7 @@ void loop()
     Serial.print(',');
     Serial.print(sats);
     if (BUTTONS) {
+      Serial.print(',');
       Serial.print(button1State);
       Serial.print(',');
       Serial.print(button2State);
@@ -423,4 +427,3 @@ void readButtons() {
   button4State = digitalRead(button4);
   button5State = digitalRead(button5);
 }
-
