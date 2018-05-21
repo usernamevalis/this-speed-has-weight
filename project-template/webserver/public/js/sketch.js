@@ -10,6 +10,12 @@
  */
 
 
+ var result;
+ function preload() {
+   result = loadStrings('./js/test.txt');
+
+ }
+
 // socket io variable
 var socket;
 socket = io.connect();
@@ -53,6 +59,7 @@ function setup() {
   // need full screen canvas that is responsive to different screen size, especially mobile
   createCanvas(windowWidth, windowHeight);
   frameRate(30);
+  console.log(result[0]);
 }
 
 //rawest possible data as feasible - need to adjust per project as needed
