@@ -26,7 +26,7 @@ var path = require('path');
 var os = process.platform;
 var portname;
 var contact = false;
-var transmissionDelay = 100;
+var transmissionDelay = 50;
 
 if (os == "linux") {
   portname = "/dev/ttyACM0"
