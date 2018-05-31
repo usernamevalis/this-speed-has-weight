@@ -5,16 +5,10 @@
  * Simple p5js app that receives data over websockets from a nodejs webserver.
  * The data received is used to change the background colour
  *
+ *
  * This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
  * Nathan Gates 2018
  */
-
-
- var result;
- function preload() {
-   result = loadStrings('./js/test.txt');
-
- }
 
 // socket io variable
 var socket;
@@ -59,7 +53,6 @@ function setup() {
   // need full screen canvas that is responsive to different screen size, especially mobile
   createCanvas(windowWidth, windowHeight);
   frameRate(30);
-  console.log(result[0]);
 }
 
 //rawest possible data as feasible - need to adjust per project as needed
@@ -78,12 +71,15 @@ function draw() {
 
   //update sensor data object
   updateSensorData();
-  //
-  defaultDisplay();
 
-  push();
-  rotateDisplay(data.x_orientation);
-  pop();
+  /*
+  data display options, default: includes all data object properties.
+  exhibitedDeviceDisplay: is specificaly for the device that was exhibited as the vanilla exhibitedDeviceDisplay
+  */
+
+  //defaultDisplay();
+  exhibitedDeviceDisplay();
+
 }
 
 function rotateDisplay(degrees) {
@@ -170,6 +166,33 @@ function defaultDisplay() {
 
         text(key + ' : ' + val, x + xInc, y);
         y -= yInc;
+      }
+    }
+  }
+}
+
+function exhibitedDeviceDisplay(){
+  //display data
+  textSize(26);
+  var x = 50;
+  var y = 50;
+  var yInc = windowHeight / ((Object.keys(data).length) / 1.5);
+  var xInc = windowWidth / 2;
+  var counter = 0;
+
+  for (var key in data) {
+    textAlign(LEFT);
+    if (data.hasOwnProperty(key)) {
+      var val = data[key];
+      if (counter < 5) {
+        text(key + ' : ' + val, x, y += yInc);
+        counter++;
+      } else {
+        if(counter < 9){
+        text(key + ' : ' + val, x + xInc, y);
+        y -= yInc;
+        counter++;
+       }
       }
     }
   }

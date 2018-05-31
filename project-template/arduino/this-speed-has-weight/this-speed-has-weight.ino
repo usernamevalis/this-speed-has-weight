@@ -14,7 +14,7 @@
 #define BME 1
 #define TSL 1
 #define GPS 0
-#define BUTTONS 1
+#define BUTTONS 0
 //i have removed the section where i actually transfer the data over serial.
 //this doesnt work well as sampling delays data transer. I have in the function for posterity
 #define MIC 0

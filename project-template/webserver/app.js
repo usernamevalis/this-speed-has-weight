@@ -30,8 +30,10 @@ var transmissionDelay = 50;
 
 if (os == "linux") {
   portname = "/dev/ttyACM0"
-} else {
+} else if (os == "win32"){
   portname = 'COM11';
+}else{
+  portname = '/dev/cu.usbmodem1431';
 }
 
 //=========================Static File Webserver=================//
