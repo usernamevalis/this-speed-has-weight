@@ -79,15 +79,20 @@ function draw() {
 
   //defaultDisplay();
   exhibitedDeviceDisplay();
+  rotateDisplay(data.x_orientation,data.lux);
 
 }
 
-function rotateDisplay(degrees) {
-  translate((windowWidth / 2) - 50, (windowHeight / 2) - 50);
+function rotateDisplay(degrees, lux) {
+  translate((windowWidth / 2)-75, (windowHeight / 5)*4-75);
   rotate(radians(degrees));
+  var _lux = map(lux, 0,1000,0,255);
+  _lux = constrain(lux, 0, 255);
+  var y = map(data.y_orientation,-90,90,0,255);
+  var z = map(data.z_orientation,-180,180,0,255);
+  fill(y,z,_lux);
   rectMode(CENTER)
-  fill(255);
-  rect(0, 0, 100, 100);
+  rect(0, 0, 150, 150);
 }
 
 //====================Socket IO Events / messages==============//
